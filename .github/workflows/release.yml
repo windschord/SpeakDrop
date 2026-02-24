@@ -1,0 +1,99 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Install PyInstaller
+        run: uv pip install pyinstaller
+
+      - name: Build macOS app
+        run: |
+          uv run pyinstaller \
+            --windowed \
+            --name "SpeakDrop" \
+            --osx-bundle-identifier "com.speakdrop.app" \
+            --collect-all "rumps" \
+            --collect-all "pynput" \
+            --collect-all "sounddevice" \
+            --collect-all "faster_whisper" \
+            --collect-all "ctranslate2" \
+            --collect-all "ollama" \
+            --collect-all "PyObjCTools" \
+            --hidden-import "AppKit" \
+            --hidden-import "Cocoa" \
+            --hidden-import "Quartz" \
+            --hidden-import "Quartz.CoreGraphics" \
+            --hidden-import "AVFoundation" \
+            speakdrop/__main__.py
+
+      - name: Configure app bundle (LSUIElement)
+        run: |
+          PLIST="dist/SpeakDrop.app/Contents/Info.plist"
+          /usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" "$PLIST" 2>/dev/null || \
+          /usr/libexec/PlistBuddy -c "Set :LSUIElement true" "$PLIST"
+
+      - name: Archive app bundle
+        run: |
+          cd dist
+          ditto -c -k --keepParent SpeakDrop.app SpeakDrop-${{ github.ref_name }}.zip
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: SpeakDrop ${{ github.ref_name }}
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true
+          files: dist/SpeakDrop-${{ github.ref_name }}.zip
+          body: |
+            ## インストール方法
+
+            1. `SpeakDrop-${{ github.ref_name }}.zip` をダウンロードして解凍
+            2. `SpeakDrop.app` を `/Applications` フォルダに移動
+            3. 初回起動時は右クリック → **開く**（Gatekeeperの警告を回避）
+
+            ## 必要な権限
+
+            初回起動時に以下の権限を付与してください：
+
+            - **マイクアクセス** — システム設定 → プライバシーとセキュリティ → マイク
+            - **アクセシビリティ** — システム設定 → プライバシーとセキュリティ → アクセシビリティ
+
+            ## テキスト後処理（オプション）
+
+            Ollama を使ったテキスト後処理を利用する場合:
+
+            ```bash
+            # Ollama のインストール後
+            ollama pull qwen2.5:7b
+            ```
+
+            Ollama が未起動の場合は、認識結果をそのまま挿入します。
+
+            ## 動作要件
+
+            - macOS 13 以降
+            - Apple Silicon（M1以上）推奨
