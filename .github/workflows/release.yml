@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build-and-release:
-    runs-on: macos-latest
+    runs-on: macos-14  # Apple Silicon (M1) - macOS 13+ 互換バイナリを生成
 
     steps:
       - name: Checkout
@@ -28,9 +28,11 @@ jobs:
         run: uv sync
 
       - name: Install PyInstaller
-        run: uv pip install pyinstaller
+        run: uv pip install "pyinstaller==6.11.0"
 
       - name: Build macOS app
+        env:
+          MACOSX_DEPLOYMENT_TARGET: "13.0"
         run: |
           uv run pyinstaller \
             --windowed \
