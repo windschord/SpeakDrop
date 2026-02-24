@@ -55,6 +55,10 @@ class ClipboardInserter:
                     data = item.dataForType_(ptype)
                     if data is not None:
                         cloned.setData_forType_(data, ptype)
+                    else:
+                        plist = item.propertyListForType_(ptype)
+                        if plist is not None:
+                            cloned.setPropertyList_forType_(plist, ptype)
                 original_items.append(cloned)
 
         # 2. テキストをクリップボードにセット

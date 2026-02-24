@@ -317,6 +317,25 @@ class TestToggleEnabled:
 
         assert "ON" in app.toggle_item.title
 
+    def test_toggle_starts_hotkey_listener_when_enabled(self, app: Any) -> None:
+        """無効->有効に切り替えると _start_hotkey_listener() が呼ばれる。"""
+        app.config.enabled = False
+
+        with patch.object(app, "_start_hotkey_listener") as mock_start:
+            app._toggle_enabled(MagicMock())
+
+        mock_start.assert_called_once()
+
+    def test_toggle_stops_hotkey_listener_when_disabled(self, app: Any) -> None:
+        """有効->無効に切り替えると hotkey_listener.stop() が呼ばれる。"""
+        app.config.enabled = True
+        mock_listener = MagicMock()
+        app.hotkey_listener = mock_listener
+
+        app._toggle_enabled(MagicMock())
+
+        mock_listener.stop.assert_called_once()
+
 
 class TestProcessAudio:
     """process_audio() のテスト。"""
