@@ -111,7 +111,7 @@ uv run python -m speakdrop
 ### セットアップ
 
 ```bash
-uv sync
+uv sync --dev
 ```
 
 ### テスト
@@ -130,7 +130,7 @@ uv run mypy speakdrop/
 
 ## アーキテクチャ
 
-```
+```text
 SpeakDrop/
 ├── speakdrop/
 │   ├── app.py               # メインアプリ（rumps.App）・状態管理
