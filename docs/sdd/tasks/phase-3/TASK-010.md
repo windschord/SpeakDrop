@@ -368,7 +368,7 @@ PROCESSING ──[エラー発生]──> IDLE
 | 項目 | 値 |
 |------|-----|
 | **タスクID** | TASK-010 |
-| **ステータス** | `IN_PROGRESS` |
+| **ステータス** | `DONE` |
 | **推定工数** | 60分 |
 | **依存関係** | TASK-002〜009 すべて完了後 |
 | **対応要件** | REQ-003, REQ-004, REQ-010, REQ-011, REQ-012, REQ-013, REQ-014, REQ-018, REQ-019 |
@@ -398,8 +398,8 @@ PROCESSING ──[エラー発生]──> IDLE
 
 ## 作業ログ（実装時に記入）
 
-### YYYY-MM-DD
-- **作業内容**:
-- **発生した問題**:
-- **解決方法**:
-- **コミットハッシュ**:
+### 2026-02-24
+- **作業内容**: SpeakDropApp（app.py）の実装と tests/test_app.py の作成（TDD）
+- **発生した問題**: (1) mypy が rumps.App サブクラス化で misc エラー。(2) icons.py の _HasName Protocol の name が read-only で arg-type エラー
+- **解決方法**: (1) type: ignore[misc] を付与。(2) icons.py の _HasName.name をプロパティ形式の Protocol に修正
+- **コミットハッシュ**: 33e87f8
