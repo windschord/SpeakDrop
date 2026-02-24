@@ -28,12 +28,18 @@ dev-dependencies = [
     "pytest-cov>=4.0.0",
     "mypy>=1.0.0",
     "ruff>=0.4.0",
-    "xenon>=0.9.0",
 ]
 
 [tool.ruff]
 target-version = "py311"
 line-length = 100
+
+[tool.ruff.lint]
+extend-select = ["C90"]
+
+[tool.ruff.lint.mccabe]
+# 最大複雑度 10 = xenon の -b B 相当（B ランク上限）
+max-complexity = 10
 
 [tool.mypy]
 python_version = "3.11"
