@@ -110,6 +110,7 @@ sys.modules.setdefault("Quartz.CoreGraphics", MagicMock())
 @pytest.fixture
 def app() -> Any:
     """SpeakDropApp インスタンスを返す（全依存をモック化）。"""
+
     def _call_after(func: Any, *args: Any, **kwargs: Any) -> None:
         func(*args, **kwargs)
 
