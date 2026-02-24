@@ -38,7 +38,7 @@ jobs:
           def make_png(w, h):
               def c(t, d):
                   x = struct.pack('>I', len(d)) + t + d
-                  return x + struct.pack('>I', zlib.crc32(x[4:]) & 0xffffffff)
+                  return x + struct.pack('>I', zlib.crc32(x[4:]))
               row = b'\x00' + b'\x00\x00\x00\x00' * w
               return (b'\x89PNG\r\n\x1a\n'
                       + c(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 6, 0, 0, 0))
