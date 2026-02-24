@@ -52,19 +52,19 @@ TDD原則に従い、pyobjcはpytest-mockでモックします。
 
 以下のすべての基準を満たしたら、このタスクは完了です：
 
-- [ ] `tests/test_clipboard_inserter.py` が作成されている（テストが6件以上）
-- [ ] `speakdrop/clipboard_inserter.py` が実装されている
-- [ ] `ClipboardInserter.PASTE_DELAY == 0.05`
-- [ ] `ClipboardInserter.RESTORE_DELAY == 0.1`
-- [ ] `insert()` 前にクリップボード内容を退避する（REQ-006）
-- [ ] `insert()` でテキストをクリップボードにセットする（REQ-005）
-- [ ] `insert()` でCmd+Vキーストロークを送信する（REQ-005）
-- [ ] `insert()` 後にクリップボード内容を復元する（REQ-006）
-- [ ] Cmd+V失敗時もクリップボード復元を保証する
-- [ ] pyobjcのモックによりテストがmacOS環境なしで動作する
-- [ ] `uv run pytest tests/test_clipboard_inserter.py -v` で全テストパス
-- [ ] `uv run ruff check speakdrop/clipboard_inserter.py tests/test_clipboard_inserter.py` でエラー0件
-- [ ] `uv run mypy speakdrop/clipboard_inserter.py` でエラー0件
+- [x] `tests/test_clipboard_inserter.py` が作成されている（テストが6件以上）
+- [x] `speakdrop/clipboard_inserter.py` が実装されている
+- [x] `ClipboardInserter.PASTE_DELAY == 0.05`
+- [x] `ClipboardInserter.RESTORE_DELAY == 0.1`
+- [x] `insert()` 前にクリップボード内容を退避する（REQ-006）
+- [x] `insert()` でテキストをクリップボードにセットする（REQ-005）
+- [x] `insert()` でCmd+Vキーストロークを送信する（REQ-005）
+- [x] `insert()` 後にクリップボード内容を復元する（REQ-006）
+- [x] Cmd+V失敗時もクリップボード復元を保証する
+- [x] pyobjcのモックによりテストがmacOS環境なしで動作する
+- [x] `uv run pytest tests/test_clipboard_inserter.py -v` で全テストパス
+- [x] `uv run ruff check speakdrop/clipboard_inserter.py tests/test_clipboard_inserter.py` でエラー0件
+- [x] `uv run mypy speakdrop/clipboard_inserter.py` でエラー0件
 
 ---
 
@@ -407,7 +407,7 @@ feat: clipboard_inserter.py - ClipboardInserter 実装（クリップボード�
 | 項目 | 値 |
 |------|-----|
 | **タスクID** | TASK-006 |
-| **ステータス** | `IN_PROGRESS` |
+| **ステータス** | `DONE` |
 | **推定工数** | 35分 |
 | **依存関係** | [TASK-001](../phase-1/TASK-001.md) @../phase-1/TASK-001.md |
 | **対応要件** | REQ-005, REQ-006 |
@@ -436,8 +436,8 @@ feat: clipboard_inserter.py - ClipboardInserter 実装（クリップボード�
 
 ## 作業ログ（実装時に記入）
 
-### YYYY-MM-DD
-- **作業内容**:
-- **発生した問題**:
-- **解決方法**:
-- **コミットハッシュ**:
+### 2026-02-24
+- **作業内容**: TDD方式でClipboardInserterモジュールを実装。テスト8件先行作成→失敗確認→実装→全パス確認
+- **発生した問題**: `test_insert_restores_clipboard_even_on_error` が失敗。例外が再スローされてinsert()から漏れていた
+- **解決方法**: `try/except/finally` パターンに変更。exceptブロックでException をキャッチして無視し、finallyで必ず復元を実行
+- **コミットハッシュ**: b9435f8

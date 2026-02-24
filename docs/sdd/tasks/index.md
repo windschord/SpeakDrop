@@ -33,7 +33,7 @@
 | フェーズ | 完了 | 進行中 | 未着手 | ブロック | 詳細リンク |
 |---------|------|--------|--------|----------|-----------|
 | Phase 1: 基盤構築 | 1 | 0 | 0 | 0 | [詳細](phase-1/) @phase-1/ |
-| Phase 2: コアモジュール（TDD） | 1 | 0 | 7 | 0 | [詳細](phase-2/) @phase-2/ |
+| Phase 2: コアモジュール（TDD） | 3 | 1 | 4 | 0 | [詳細](phase-2/) @phase-2/ |
 | Phase 3: 統合・エントリーポイント | 0 | 0 | 2 | 0 | [詳細](phase-3/) @phase-3/ |
 | Phase 4: 品質保証 | 0 | 0 | 1 | 0 | [詳細](phase-4/) @phase-4/ |
 
@@ -57,7 +57,7 @@
 | TASK-003 | AudioRecorder モジュール（TDD） | `TODO` | TASK-001 | 30min | [詳細](phase-2/TASK-003.md) @phase-2/TASK-003.md |
 | TASK-004 | Transcriber モジュール（TDD） | `TODO` | TASK-001 | 30min | [詳細](phase-2/TASK-004.md) @phase-2/TASK-004.md |
 | TASK-005 | TextProcessor モジュール（TDD） | `DONE` | TASK-001 | 25min | [詳細](phase-2/TASK-005.md) @phase-2/TASK-005.md |
-| TASK-006 | ClipboardInserter モジュール（TDD） | `IN_PROGRESS` | TASK-001 | 35min | [詳細](phase-2/TASK-006.md) @phase-2/TASK-006.md |
+| TASK-006 | ClipboardInserter モジュール（TDD） | `DONE` | TASK-001 | 35min | [詳細](phase-2/TASK-006.md) @phase-2/TASK-006.md |
 | TASK-007 | HotkeyListener モジュール（TDD） | `IN_PROGRESS` | TASK-001 | 30min | [詳細](phase-2/TASK-007.md) @phase-2/TASK-007.md |
 | TASK-008 | PermissionChecker モジュール（TDD） | `TODO` | TASK-001 | 25min | [詳細](phase-2/TASK-008.md) @phase-2/TASK-008.md |
 | TASK-009 | Icons モジュール | `DONE` | TASK-001 | 15min | [詳細](phase-2/TASK-009.md) @phase-2/TASK-009.md |
