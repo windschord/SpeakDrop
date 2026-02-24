@@ -60,7 +60,7 @@
 | TASK-006 | ClipboardInserter モジュール（TDD） | `IN_PROGRESS` | TASK-001 | 35min | [詳細](phase-2/TASK-006.md) @phase-2/TASK-006.md |
 | TASK-007 | HotkeyListener モジュール（TDD） | `IN_PROGRESS` | TASK-001 | 30min | [詳細](phase-2/TASK-007.md) @phase-2/TASK-007.md |
 | TASK-008 | PermissionChecker モジュール（TDD） | `TODO` | TASK-001 | 25min | [詳細](phase-2/TASK-008.md) @phase-2/TASK-008.md |
-| TASK-009 | Icons モジュール | `IN_PROGRESS` | TASK-001 | 15min | [詳細](phase-2/TASK-009.md) @phase-2/TASK-009.md |
+| TASK-009 | Icons モジュール | `DONE` | TASK-001 | 15min | [詳細](phase-2/TASK-009.md) @phase-2/TASK-009.md |
 
 ### Phase 3: 統合・エントリーポイント
 *推定期間: 70分（AIエージェント作業時間）。TASK-010の後にTASK-011*
