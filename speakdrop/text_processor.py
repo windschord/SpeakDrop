@@ -23,7 +23,7 @@ class TextProcessor:
 
     def __init__(self) -> None:
         """TextProcessor を初期化する。"""
-        self._client = ollama.Client(host=self.OLLAMA_HOST)
+        self._client = ollama.Client(host=self.OLLAMA_HOST, timeout=5.0)
 
     def process(self, text: str) -> str:
         """テキストを後処理して返す。

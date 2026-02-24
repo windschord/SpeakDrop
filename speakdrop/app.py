@@ -124,7 +124,7 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             return
         if self.state != AppState.IDLE:
             return
-        self.set_state(AppState.RECORDING)
+        AppHelper.callAfter(self.set_state, AppState.RECORDING)
         self.audio_recorder.start_recording()
 
     def on_hotkey_release(self) -> None:
@@ -132,7 +132,7 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         if self.state != AppState.RECORDING:
             return
         audio = self.audio_recorder.stop_recording()
-        self.set_state(AppState.PROCESSING)
+        AppHelper.callAfter(self.set_state, AppState.PROCESSING)
         thread = threading.Thread(
             target=self.process_audio,
             args=(audio,),

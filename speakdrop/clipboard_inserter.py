@@ -5,6 +5,7 @@ CGEvent で Cmd+V キーストロークを送信してテキストを挿入す�
 挿入前後にクリップボード内容を退避・復元する（REQ-006）。
 """
 
+import logging
 import time
 
 from AppKit import NSPasteboardItem, NSPasteboardTypeString
@@ -16,6 +17,8 @@ from Quartz.CoreGraphics import (
     kCGEventFlagMaskCommand,
     kCGHIDEventTap,
 )
+
+_logger = logging.getLogger(__name__)
 
 # 'v' キーのキーコード
 _KEY_V = 0x09
@@ -62,8 +65,8 @@ class ClipboardInserter:
             # 3. Cmd+V を送信
             time.sleep(self.PASTE_DELAY)
             self._send_cmd_v()
-        except Exception:
-            pass
+        except Exception as e:
+            _logger.warning("Cmd+V 送信に失敗しました: %s", e)
         finally:
             # 4. 待機してから復元
             time.sleep(self.RESTORE_DELAY)

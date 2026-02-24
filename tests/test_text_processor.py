@@ -41,7 +41,7 @@ class TestTextProcessorProcess:
 
         TextProcessor()
 
-        mock_client_cls.assert_called_once_with(host=TextProcessor.OLLAMA_HOST)
+        mock_client_cls.assert_called_once_with(host=TextProcessor.OLLAMA_HOST, timeout=5.0)
 
     @patch("speakdrop.text_processor.ollama.Client")
     def test_process_calls_ollama_with_correct_model(self, mock_client_cls: MagicMock) -> None:
