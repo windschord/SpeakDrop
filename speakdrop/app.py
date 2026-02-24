@@ -81,6 +81,16 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         if self.config.enabled:
             self._start_hotkey_listener()
 
+    def check_permissions(self) -> bool:
+        """マイク・アクセシビリティ権限を確認する（REQ-021, REQ-022）。
+
+        Returns:
+            すべての権限が許可されている場合は True、そうでない場合は False
+        """
+        mic_ok = self.permission_checker.check_microphone()
+        ax_ok = self.permission_checker.check_accessibility()
+        return mic_ok and ax_ok
+
     def _start_hotkey_listener(self) -> None:
         """HotkeyListener を起動する。"""
         self.hotkey_listener = HotkeyListener(
