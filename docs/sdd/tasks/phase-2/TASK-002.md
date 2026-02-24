@@ -20,8 +20,8 @@ TDD原則に従い、まずテストを作成・コミットし、その後テ�
 
 | 操作 | ファイルパス | 説明 |
 |------|-------------|------|
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/tests/test_config.py` | テストファイル（先行作成） |
-| 変更 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/config.py` | Config モジュール本実装 |
+| 作成 | `tests/test_config.py` | テストファイル（先行作成） |
+| 変更 | `speakdrop/config.py` | Config モジュール本実装 |
 
 ---
 
@@ -35,16 +35,16 @@ TDD原則に従い、まずテストを作成・コミットし、その後テ�
 
 ### 参照すべきファイル
 
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/config.py` - 現在のスタブ（TASK-001で作成済み）
+- `@speakdrop/config.py` - 現在のスタブ（TASK-001で作成済み）
 
 ### 関連する設計書
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「Config」セクション（行389-424）
+- `@docs/sdd/design/design.md` の「Config」セクション（行389-424）
 
 ### 関連する要件
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-004.md` - ホットキーの設定
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-005.md` - 音声認識モデルの設定
+- `@docs/sdd/requirements/stories/US-004.md` - ホットキーの設定
+- `@docs/sdd/requirements/stories/US-005.md` - 音声認識モデルの設定
 
 ---
 
@@ -70,7 +70,7 @@ TDD原則に従い、まずテストを作成・コミットし、その後テ�
 
 ### ステップ1: テストを先に作成（TDD）
 
-`/Users/tsk/Sync/git/SpeakDrop/tests/test_config.py` を作成し、以下のテストケースを実装してください：
+`tests/test_config.py` を作成し、以下のテストケースを実装してください：
 
 ```python
 """Config モジュールのテスト。"""
@@ -202,7 +202,7 @@ class TestConfigSave:
 テストを実行して全テストが失敗することを確認：
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_config.py -v
 ```
 
@@ -214,7 +214,7 @@ test: test_config.py - Config モジュールのTDDテスト追加
 
 ### ステップ2: Config モジュールを実装
 
-`/Users/tsk/Sync/git/SpeakDrop/speakdrop/config.py` を実装してください：
+`speakdrop/config.py` を実装してください：
 
 ```python
 """設定管理モジュール。
@@ -268,7 +268,7 @@ class Config:
 ### ステップ3: テストがパスすることを確認
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_config.py -v
 uv run ruff check speakdrop/config.py tests/test_config.py
 uv run mypy speakdrop/config.py

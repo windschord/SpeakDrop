@@ -9,7 +9,7 @@
 
 ### ユーザーから明示された情報
 
-- [x] 実装対象のディレクトリ構造: `/Users/tsk/Sync/git/SpeakDrop/`
+- [x] 実装対象のディレクトリ構造: ``
 - [x] 使用するパッケージマネージャー: uv
 - [x] テストフレームワーク: pytest + pytest-mock + pytest-cov
 - [x] リンター/フォーマッター: ruff + mypy (strict)

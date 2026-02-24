@@ -28,7 +28,10 @@ class Config:
             self（メソッドチェーン対応）
         """
         if config_path.exists():
-            data: dict[str, object] = json.loads(config_path.read_text(encoding="utf-8"))
+            try:
+                data: dict[str, object] = json.loads(config_path.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                return self
             for key, value in data.items():
                 if hasattr(self, key):
                     setattr(self, key, value)

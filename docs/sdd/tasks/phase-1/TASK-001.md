@@ -20,19 +20,19 @@ Pythonパッケージとして動作する `speakdrop/` ディレクトリ構造
 
 | 操作 | ファイルパス | 説明 |
 |------|-------------|------|
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/pyproject.toml` | プロジェクト設定・依存関係定義 |
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/__init__.py` | パッケージ初期化（空ファイル） |
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/__main__.py` | エントリーポイントスタブ |
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/app.py` | メインアプリスタブ |
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/audio_recorder.py` | 音声録音スタブ |
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/transcriber.py` | 音声認識スタブ |
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/text_processor.py` | テキスト後処理スタブ |
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/clipboard_inserter.py` | クリップボードスタブ |
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/hotkey_listener.py` | ホットキースタブ |
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/config.py` | 設定スタブ |
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/permissions.py` | 権限チェックスタブ |
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/icons.py` | アイコン生成スタブ |
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/tests/__init__.py` | テストパッケージ初期化 |
+| 作成 | `pyproject.toml` | プロジェクト設定・依存関係定義 |
+| 作成 | `speakdrop/__init__.py` | パッケージ初期化（空ファイル） |
+| 作成 | `speakdrop/__main__.py` | エントリーポイントスタブ |
+| 作成 | `speakdrop/app.py` | メインアプリスタブ |
+| 作成 | `speakdrop/audio_recorder.py` | 音声録音スタブ |
+| 作成 | `speakdrop/transcriber.py` | 音声認識スタブ |
+| 作成 | `speakdrop/text_processor.py` | テキスト後処理スタブ |
+| 作成 | `speakdrop/clipboard_inserter.py` | クリップボードスタブ |
+| 作成 | `speakdrop/hotkey_listener.py` | ホットキースタブ |
+| 作成 | `speakdrop/config.py` | 設定スタブ |
+| 作成 | `speakdrop/permissions.py` | 権限チェックスタブ |
+| 作成 | `speakdrop/icons.py` | アイコン生成スタブ |
+| 作成 | `tests/__init__.py` | テストパッケージ初期化 |
 
 ---
 
@@ -47,8 +47,8 @@ Pythonパッケージとして動作する `speakdrop/` ディレクトリ構造
 
 ### 関連する設計書
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「プロジェクト構成」セクション（行111-140）
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「pyproject.toml 設計」セクション（行638-686）
+- `@docs/sdd/design/design.md` の「プロジェクト構成」セクション（行111-140）
+- `@docs/sdd/design/design.md` の「pyproject.toml 設計」セクション（行638-686）
 
 ---
 
@@ -56,7 +56,7 @@ Pythonパッケージとして動作する `speakdrop/` ディレクトリ構造
 
 以下のすべての基準を満たしたら、このタスクは完了です：
 
-- [ ] `/Users/tsk/Sync/git/SpeakDrop/pyproject.toml` が設計書仕様通りに作成されている
+- [ ] `pyproject.toml` が設計書仕様通りに作成されている
 - [ ] `speakdrop/` ディレクトリ以下に全10モジュールファイルが存在する
 - [ ] `tests/__init__.py` が存在する
 - [ ] `uv sync` が正常に完了する（依存解決できる）
@@ -70,7 +70,7 @@ Pythonパッケージとして動作する `speakdrop/` ディレクトリ構造
 
 ### ステップ1: pyproject.toml を作成
 
-設計書（`/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` 行638-686）に記載の仕様通り `pyproject.toml` を作成してください。
+設計書（`docs/sdd/design/design.md` 行638-686）に記載の仕様通り `pyproject.toml` を作成してください。
 
 ```toml
 [project]
@@ -129,7 +129,7 @@ fail_under = 80
 ### ステップ3: uv sync の実行
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv sync
 ```
 

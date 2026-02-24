@@ -7,7 +7,7 @@ CGEvent で Cmd+V キーストロークを送信してテキストを挿入す�
 
 import time
 
-from AppKit import NSPasteboardTypeString
+from AppKit import NSPasteboardItem, NSPasteboardTypeString
 from Cocoa import NSPasteboard
 from Quartz.CoreGraphics import (
     CGEventCreateKeyboardEvent,
@@ -42,8 +42,17 @@ class ClipboardInserter:
         """
         pb = NSPasteboard.generalPasteboard()
 
-        # 1. 退避
-        original = pb.stringForType_(NSPasteboardTypeString)
+        # 1. 退避 - 全クリップボードアイテムの型とデータを保存（REQ-006）
+        original_items: list[NSPasteboardItem] = []
+        items = pb.pasteboardItems()
+        if items:
+            for item in items:
+                cloned = NSPasteboardItem.new()
+                for ptype in item.types():
+                    data = item.dataForType_(ptype)
+                    if data is not None:
+                        cloned.setData_forType_(data, ptype)
+                original_items.append(cloned)
 
         # 2. テキストをクリップボードにセット
         pb.clearContents()
@@ -60,8 +69,8 @@ class ClipboardInserter:
             time.sleep(self.RESTORE_DELAY)
             # 5. 復元（REQ-006）
             pb.clearContents()
-            if original is not None:
-                pb.setString_forType_(original, NSPasteboardTypeString)
+            if original_items:
+                pb.writeObjects_(original_items)
 
     def _send_cmd_v(self) -> None:
         """Cmd+V キーストロークを送信する。"""

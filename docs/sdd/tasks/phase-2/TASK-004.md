@@ -20,8 +20,8 @@ TDD原則に従い、`faster_whisper.WhisperModel` はpytest-mockでモックし
 
 | 操作 | ファイルパス | 説明 |
 |------|-------------|------|
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/tests/test_transcriber.py` | テストファイル（先行作成） |
-| 変更 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/transcriber.py` | Transcriber モジュール本実装 |
+| 作成 | `tests/test_transcriber.py` | テストファイル（先行作成） |
+| 変更 | `speakdrop/transcriber.py` | Transcriber モジュール本実装 |
 
 ---
 
@@ -36,16 +36,16 @@ TDD原則に従い、`faster_whisper.WhisperModel` はpytest-mockでモックし
 
 ### 参照すべきファイル
 
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/transcriber.py` - 現在のスタブ
+- `@speakdrop/transcriber.py` - 現在のスタブ
 
 ### 関連する設計書
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「Transcriber」セクション（行247-284）
+- `@docs/sdd/design/design.md` の「Transcriber」セクション（行247-284）
 
 ### 関連する要件
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-001.md` - プッシュトークによる音声入力
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-005.md` - 音声認識モデルの設定
+- `@docs/sdd/requirements/stories/US-001.md` - プッシュトークによる音声入力
+- `@docs/sdd/requirements/stories/US-005.md` - 音声認識モデルの設定
 
 ---
 
@@ -72,7 +72,7 @@ TDD原則に従い、`faster_whisper.WhisperModel` はpytest-mockでモックし
 
 ### ステップ1: テストを先に作成（TDD）
 
-`/Users/tsk/Sync/git/SpeakDrop/tests/test_transcriber.py` を作成してください：
+`tests/test_transcriber.py` を作成してください：
 
 ```python
 """Transcriber モジュールのテスト。"""
@@ -241,7 +241,7 @@ class TestTranscriberReloadModel:
 テストを実行して失敗を確認：
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_transcriber.py -v
 ```
 
@@ -253,7 +253,7 @@ test: test_transcriber.py - Transcriber モジュールのTDDテスト追加
 
 ### ステップ2: Transcriber モジュールを実装
 
-`/Users/tsk/Sync/git/SpeakDrop/speakdrop/transcriber.py` を実装してください：
+`speakdrop/transcriber.py` を実装してください：
 
 ```python
 """音声認識モジュール。
@@ -325,7 +325,7 @@ class Transcriber:
 ### ステップ3: テストがパスすることを確認
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_transcriber.py -v
 uv run ruff check speakdrop/transcriber.py tests/test_transcriber.py
 uv run mypy speakdrop/transcriber.py

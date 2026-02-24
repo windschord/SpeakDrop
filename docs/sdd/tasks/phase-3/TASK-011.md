@@ -19,7 +19,7 @@
 
 | 操作 | ファイルパス | 説明 |
 |------|-------------|------|
-| 変更 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/__main__.py` | エントリーポイント本実装 |
+| 変更 | `speakdrop/__main__.py` | エントリーポイント本実装 |
 
 ---
 
@@ -32,16 +32,16 @@
 
 ### 参照すべきファイル
 
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/__main__.py` - 現在のスタブ
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/app.py` - SpeakDropApp クラス
+- `@speakdrop/__main__.py` - 現在のスタブ
+- `@speakdrop/app.py` - SpeakDropApp クラス
 
 ### 関連する設計書
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「SpeakDropApp」初期化シーケンス（行211-215）
+- `@docs/sdd/design/design.md` の「SpeakDropApp」初期化シーケンス（行211-215）
 
 ### 関連する要件
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-006.md` - macOS権限の管理
+- `@docs/sdd/requirements/stories/US-006.md` - macOS権限の管理
 
 ---
 
@@ -62,7 +62,7 @@
 
 ### ステップ1: `__main__.py` を実装
 
-`/Users/tsk/Sync/git/SpeakDrop/speakdrop/__main__.py` を実装してください：
+`speakdrop/__main__.py` を実装してください：
 
 ```python
 """SpeakDrop エントリーポイント。
@@ -91,7 +91,7 @@ if __name__ == "__main__":
 
 ### ステップ2: pyproject.toml のエントリーポイントを確認
 
-`/Users/tsk/Sync/git/SpeakDrop/pyproject.toml` を確認し、以下が設定されていることを確認してください：
+`pyproject.toml` を確認し、以下が設定されていることを確認してください：
 
 ```toml
 [project.scripts]
@@ -103,7 +103,7 @@ speakdrop = "speakdrop.__main__:main"
 ### ステップ3: 品質チェック
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run ruff check speakdrop/__main__.py
 uv run mypy speakdrop/__main__.py
 ```

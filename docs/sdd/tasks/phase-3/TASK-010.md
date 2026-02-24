@@ -20,7 +20,7 @@ AppState enum の定義、状態管理、メニューバーUI（状態表示・O
 
 | 操作 | ファイルパス | 説明 |
 |------|-------------|------|
-| 変更 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/app.py` | SpeakDropApp メインアプリ実装 |
+| 変更 | `speakdrop/app.py` | SpeakDropApp メインアプリ実装 |
 
 ---
 
@@ -36,28 +36,28 @@ AppState enum の定義、状態管理、メニューバーUI（状態表示・O
 ### 参照すべきファイル
 
 全モジュール（TASK-002〜009で実装済み）:
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/config.py` - Config クラス
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/audio_recorder.py` - AudioRecorder クラス
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/transcriber.py` - Transcriber クラス
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/text_processor.py` - TextProcessor クラス
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/clipboard_inserter.py` - ClipboardInserter クラス
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/hotkey_listener.py` - HotkeyListener クラス
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/permissions.py` - PermissionChecker クラス
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/icons.py` - get_icon_title 関数
+- `@speakdrop/config.py` - Config クラス
+- `@speakdrop/audio_recorder.py` - AudioRecorder クラス
+- `@speakdrop/transcriber.py` - Transcriber クラス
+- `@speakdrop/text_processor.py` - TextProcessor クラス
+- `@speakdrop/clipboard_inserter.py` - ClipboardInserter クラス
+- `@speakdrop/hotkey_listener.py` - HotkeyListener クラス
+- `@speakdrop/permissions.py` - PermissionChecker クラス
+- `@speakdrop/icons.py` - get_icon_title 関数
 
 ### 関連する設計書
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「SpeakDropApp」セクション（行170-216）
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「AppState」セクション（行146-166）
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「状態管理とスレッド設計」セクション（行507-521）
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「エラー処理戦略」セクション（行524-535）
+- `@docs/sdd/design/design.md` の「SpeakDropApp」セクション（行170-216）
+- `@docs/sdd/design/design.md` の「AppState」セクション（行146-166）
+- `@docs/sdd/design/design.md` の「状態管理とスレッド設計」セクション（行507-521）
+- `@docs/sdd/design/design.md` の「エラー処理戦略」セクション（行524-535）
 
 ### 関連する要件
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-001.md` - プッシュトークによる音声入力
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-003.md` - メニューバー常駐と設定
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-004.md` - ホットキーの設定
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-005.md` - 音声認識モデルの設定
+- `@docs/sdd/requirements/stories/US-001.md` - プッシュトークによる音声入力
+- `@docs/sdd/requirements/stories/US-003.md` - メニューバー常駐と設定
+- `@docs/sdd/requirements/stories/US-004.md` - ホットキーの設定
+- `@docs/sdd/requirements/stories/US-005.md` - 音声認識モデルの設定
 
 ---
 
@@ -84,7 +84,7 @@ AppState enum の定義、状態管理、メニューバーUI（状態表示・O
 
 ### ステップ1: AppState enum と SpeakDropApp を実装
 
-`/Users/tsk/Sync/git/SpeakDrop/speakdrop/app.py` を実装してください：
+`speakdrop/app.py` を実装してください：
 
 ```python
 """メインアプリケーションモジュール。
@@ -302,7 +302,7 @@ class SpeakDropApp(rumps.App):
 ### ステップ2: 品質チェック
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run ruff check speakdrop/app.py
 uv run mypy speakdrop/app.py
 ```

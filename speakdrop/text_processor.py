@@ -21,6 +21,10 @@ class TextProcessor:
     OLLAMA_HOST: str = "http://localhost:11434"  # NFR-005: ローカル固定
     MODEL: str = "qwen2.5:7b"
 
+    def __init__(self) -> None:
+        """TextProcessor を初期化する。"""
+        self._client = ollama.Client(host=self.OLLAMA_HOST)
+
     def process(self, text: str) -> str:
         """テキストを後処理して返す。
 
@@ -33,7 +37,7 @@ class TextProcessor:
             処理済みテキスト。Ollama 未起動時は入力テキストそのまま。
         """
         try:
-            response = ollama.chat(
+            response = self._client.chat(
                 model=self.MODEL,
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},

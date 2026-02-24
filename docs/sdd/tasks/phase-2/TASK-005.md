@@ -20,8 +20,8 @@ TDD原則に従い、`ollama` クライアントはpytest-mockでモックしま
 
 | 操作 | ファイルパス | 説明 |
 |------|-------------|------|
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/tests/test_text_processor.py` | テストファイル（先行作成） |
-| 変更 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/text_processor.py` | TextProcessor モジュール本実装 |
+| 作成 | `tests/test_text_processor.py` | テストファイル（先行作成） |
+| 変更 | `speakdrop/text_processor.py` | TextProcessor モジュール本実装 |
 
 ---
 
@@ -35,15 +35,15 @@ TDD原則に従い、`ollama` クライアントはpytest-mockでモックしま
 
 ### 参照すべきファイル
 
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/text_processor.py` - 現在のスタブ
+- `@speakdrop/text_processor.py` - 現在のスタブ
 
 ### 関連する設計書
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「TextProcessor」セクション（行287-317）
+- `@docs/sdd/design/design.md` の「TextProcessor」セクション（行287-317）
 
 ### 関連する要件
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-002.md` - テキスト後処理
+- `@docs/sdd/requirements/stories/US-002.md` - テキスト後処理
 
 ---
 
@@ -69,7 +69,7 @@ TDD原則に従い、`ollama` クライアントはpytest-mockでモックしま
 
 ### ステップ1: テストを先に作成（TDD）
 
-`/Users/tsk/Sync/git/SpeakDrop/tests/test_text_processor.py` を作成してください：
+`tests/test_text_processor.py` を作成してください：
 
 ```python
 """TextProcessor モジュールのテスト。"""
@@ -165,7 +165,7 @@ class TestTextProcessorProcess:
 テストを実行して失敗を確認：
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_text_processor.py -v
 ```
 
@@ -177,7 +177,7 @@ test: test_text_processor.py - TextProcessor モジュールのTDDテスト追�
 
 ### ステップ2: TextProcessor モジュールを実装
 
-`/Users/tsk/Sync/git/SpeakDrop/speakdrop/text_processor.py` を実装してください：
+`speakdrop/text_processor.py` を実装してください：
 
 ```python
 """テキスト後処理モジュール。
@@ -233,7 +233,7 @@ class TextProcessor:
 ### ステップ3: テストがパスすることを確認
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_text_processor.py -v
 uv run ruff check speakdrop/text_processor.py tests/test_text_processor.py
 uv run mypy speakdrop/text_processor.py

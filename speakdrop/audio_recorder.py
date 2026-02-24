@@ -43,6 +43,10 @@ class AudioRecorder:
 
         sounddevice.InputStream を開始し、音声コールバックを登録する。
         """
+        if self._stream is not None:
+            self._stream.stop()
+            self._stream.close()
+            self._stream = None
         with self._lock:
             self._frames = []
         self._stream = sd.InputStream(

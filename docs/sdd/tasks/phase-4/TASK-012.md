@@ -20,8 +20,8 @@
 
 | 操作 | ファイルパス | 説明 |
 |------|-------------|------|
-| 確認/修正 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/*.py` | 品質基準違反の修正 |
-| 確認/追加 | `/Users/tsk/Sync/git/SpeakDrop/tests/*.py` | カバレッジ不足時のテスト追加 |
+| 確認/修正 | `speakdrop/*.py` | 品質基準違反の修正 |
+| 確認/追加 | `tests/*.py` | カバレッジ不足時のテスト追加 |
 
 ---
 
@@ -36,18 +36,18 @@
 ### 参照すべきファイル
 
 すべてのモジュールとテストファイル:
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/` - 全実装ファイル
-- `@/Users/tsk/Sync/git/SpeakDrop/tests/` - 全テストファイル
-- `@/Users/tsk/Sync/git/SpeakDrop/pyproject.toml` - 品質ツール設定
+- `@speakdrop/` - 全実装ファイル
+- `@tests/` - 全テストファイル
+- `@pyproject.toml` - 品質ツール設定
 
 ### 関連する設計書
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「テスト戦略」セクション（行580-608）
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「CI/CD設計」セクション（行611-634）
+- `@docs/sdd/design/design.md` の「テスト戦略」セクション（行580-608）
+- `@docs/sdd/design/design.md` の「CI/CD設計」セクション（行611-634）
 
 ### 関連する要件
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/nfr/maintainability.md` - NFR-009, NFR-010
+- `@docs/sdd/requirements/nfr/maintainability.md` - NFR-009, NFR-010
 
 ---
 
@@ -69,7 +69,7 @@
 ### ステップ1: ruff チェック・修正
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 
 # Lint チェック
 uv run ruff check .
@@ -89,7 +89,7 @@ uv run ruff format .
 ### ステップ2: mypy 型チェック
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run mypy .
 ```
 
@@ -101,7 +101,7 @@ uv run mypy .
 ### ステップ3: pytest とカバレッジ確認
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest --cov=speakdrop --cov-report=term-missing -v
 ```
 
@@ -117,14 +117,14 @@ uv run pytest --cov=speakdrop --cov-report=term-missing -v
 ### ステップ4: カバレッジ80%以上を確認
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest --cov=speakdrop --cov-fail-under=80
 ```
 
 ### ステップ5: 最終品質確認コミット
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run ruff check .
 uv run ruff format --check .
 uv run mypy .

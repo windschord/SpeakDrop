@@ -20,8 +20,8 @@ TDD原則に従い、まずテストを作成・コミットし、その後テ�
 
 | 操作 | ファイルパス | 説明 |
 |------|-------------|------|
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/tests/test_audio_recorder.py` | テストファイル（先行作成） |
-| 変更 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/audio_recorder.py` | AudioRecorder モジュール本実装 |
+| 作成 | `tests/test_audio_recorder.py` | テストファイル（先行作成） |
+| 変更 | `speakdrop/audio_recorder.py` | AudioRecorder モジュール本実装 |
 
 ---
 
@@ -36,15 +36,15 @@ TDD原則に従い、まずテストを作成・コミットし、その後テ�
 
 ### 参照すべきファイル
 
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/audio_recorder.py` - 現在のスタブ
+- `@speakdrop/audio_recorder.py` - 現在のスタブ
 
 ### 関連する設計書
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「AudioRecorder」セクション（行219-244）
+- `@docs/sdd/design/design.md` の「AudioRecorder」セクション（行219-244）
 
 ### 関連する要件
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-001.md` - プッシュトークによる音声入力
+- `@docs/sdd/requirements/stories/US-001.md` - プッシュトークによる音声入力
 
 ---
 
@@ -71,7 +71,7 @@ TDD原則に従い、まずテストを作成・コミットし、その後テ�
 
 ### ステップ1: テストを先に作成（TDD）
 
-`/Users/tsk/Sync/git/SpeakDrop/tests/test_audio_recorder.py` を作成してください：
+`tests/test_audio_recorder.py` を作成してください：
 
 ```python
 """AudioRecorder モジュールのテスト。"""
@@ -188,7 +188,7 @@ class TestAudioRecorderRecording:
 テストを実行して失敗を確認：
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_audio_recorder.py -v
 ```
 
@@ -200,7 +200,7 @@ test: test_audio_recorder.py - AudioRecorder モジュールのTDDテスト追�
 
 ### ステップ2: AudioRecorder モジュールを実装
 
-`/Users/tsk/Sync/git/SpeakDrop/speakdrop/audio_recorder.py` を実装してください：
+`speakdrop/audio_recorder.py` を実装してください：
 
 ```python
 """音声録音モジュール。
@@ -283,7 +283,7 @@ class AudioRecorder:
 ### ステップ3: テストがパスすることを確認
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_audio_recorder.py -v
 uv run ruff check speakdrop/audio_recorder.py tests/test_audio_recorder.py
 uv run mypy speakdrop/audio_recorder.py

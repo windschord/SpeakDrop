@@ -20,8 +20,8 @@ TDD原則に従い、pyobjcはpytest-mockでモックします。
 
 | 操作 | ファイルパス | 説明 |
 |------|-------------|------|
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/tests/test_permissions.py` | テストファイル（先行作成） |
-| 変更 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/permissions.py` | PermissionChecker モジュール本実装 |
+| 作成 | `tests/test_permissions.py` | テストファイル（先行作成） |
+| 変更 | `speakdrop/permissions.py` | PermissionChecker モジュール本実装 |
 
 ---
 
@@ -35,15 +35,15 @@ TDD原則に従い、pyobjcはpytest-mockでモックします。
 
 ### 参照すべきファイル
 
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/permissions.py` - 現在のスタブ
+- `@speakdrop/permissions.py` - 現在のスタブ
 
 ### 関連する設計書
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「PermissionChecker」セクション（行427-449）
+- `@docs/sdd/design/design.md` の「PermissionChecker」セクション（行427-449）
 
 ### 関連する要件
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-006.md` - macOS権限の管理
+- `@docs/sdd/requirements/stories/US-006.md` - macOS権限の管理
 
 ---
 
@@ -70,7 +70,7 @@ TDD原則に従い、pyobjcはpytest-mockでモックします。
 
 ### ステップ1: テストを先に作成（TDD）
 
-`/Users/tsk/Sync/git/SpeakDrop/tests/test_permissions.py` を作成してください：
+`tests/test_permissions.py` を作成してください：
 
 ```python
 """PermissionChecker モジュールのテスト。"""
@@ -195,7 +195,7 @@ class TestCheckAccessibility:
 テストを実行して失敗を確認：
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_permissions.py -v
 ```
 
@@ -207,7 +207,7 @@ test: test_permissions.py - PermissionChecker モジュールのTDDテスト追�
 
 ### ステップ2: PermissionChecker モジュールを実装
 
-`/Users/tsk/Sync/git/SpeakDrop/speakdrop/permissions.py` を実装してください：
+`speakdrop/permissions.py` を実装してください：
 
 ```python
 """macOS権限確認モジュール。
@@ -265,7 +265,7 @@ class PermissionChecker:
 ### ステップ3: テストがパスすることを確認
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_permissions.py -v
 uv run ruff check speakdrop/permissions.py tests/test_permissions.py
 uv run mypy speakdrop/permissions.py

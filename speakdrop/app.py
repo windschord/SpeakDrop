@@ -10,6 +10,7 @@ from enum import Enum, auto
 
 import numpy as np
 import rumps
+from PyObjCTools import AppHelper
 
 from speakdrop.audio_recorder import AudioRecorder
 from speakdrop.clipboard_inserter import ClipboardInserter
@@ -153,13 +154,14 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             processed = self.text_processor.process(text)
             self.clipboard_inserter.insert(processed)
         except Exception as e:
-            rumps.notification(
+            AppHelper.callAfter(
+                rumps.notification,
                 title="SpeakDrop エラー",
                 subtitle="音声処理に失敗しました",
                 message=str(e),
             )
         finally:
-            self.set_state(AppState.IDLE)
+            AppHelper.callAfter(self.set_state, AppState.IDLE)
 
     def _toggle_enabled(self, sender: rumps.MenuItem) -> None:
         """音声入力の有効/無効を切り替える（REQ-012）。"""

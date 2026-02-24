@@ -20,8 +20,8 @@ TDD原則に従い、`pynput.keyboard.Listener` はpytest-mockでモックしま
 
 | 操作 | ファイルパス | 説明 |
 |------|-------------|------|
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/tests/test_hotkey_listener.py` | テストファイル（先行作成） |
-| 変更 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/hotkey_listener.py` | HotkeyListener モジュール本実装 |
+| 作成 | `tests/test_hotkey_listener.py` | テストファイル（先行作成） |
+| 変更 | `speakdrop/hotkey_listener.py` | HotkeyListener モジュール本実装 |
 
 ---
 
@@ -35,16 +35,16 @@ TDD原則に従い、`pynput.keyboard.Listener` はpytest-mockでモックしま
 
 ### 参照すべきファイル
 
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/hotkey_listener.py` - 現在のスタブ
+- `@speakdrop/hotkey_listener.py` - 現在のスタブ
 
 ### 関連する設計書
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「HotkeyListener」セクション（行353-386）
+- `@docs/sdd/design/design.md` の「HotkeyListener」セクション（行353-386）
 
 ### 関連する要件
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-001.md` - プッシュトークによる音声入力
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-004.md` - ホットキーの設定
+- `@docs/sdd/requirements/stories/US-001.md` - プッシュトークによる音声入力
+- `@docs/sdd/requirements/stories/US-004.md` - ホットキーの設定
 
 ---
 
@@ -72,7 +72,7 @@ TDD原則に従い、`pynput.keyboard.Listener` はpytest-mockでモックしま
 
 ### ステップ1: テストを先に作成（TDD）
 
-`/Users/tsk/Sync/git/SpeakDrop/tests/test_hotkey_listener.py` を作成してください：
+`tests/test_hotkey_listener.py` を作成してください：
 
 ```python
 """HotkeyListener モジュールのテスト。"""
@@ -289,7 +289,7 @@ class TestHotkeyListenerCaptureMode:
 テストを実行して失敗を確認：
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_hotkey_listener.py -v
 ```
 
@@ -301,7 +301,7 @@ test: test_hotkey_listener.py - HotkeyListener モジュールのTDDテスト追
 
 ### ステップ2: HotkeyListener モジュールを実装
 
-`/Users/tsk/Sync/git/SpeakDrop/speakdrop/hotkey_listener.py` を実装してください：
+`speakdrop/hotkey_listener.py` を実装してください：
 
 ```python
 """グローバルホットキー監視モジュール。
@@ -400,7 +400,7 @@ class HotkeyListener:
 ### ステップ3: テストがパスすることを確認
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_hotkey_listener.py -v
 uv run ruff check speakdrop/hotkey_listener.py tests/test_hotkey_listener.py
 uv run mypy speakdrop/hotkey_listener.py

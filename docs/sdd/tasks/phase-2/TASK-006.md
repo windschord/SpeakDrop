@@ -20,8 +20,8 @@ TDD原則に従い、pyobjcはpytest-mockでモックします。
 
 | 操作 | ファイルパス | 説明 |
 |------|-------------|------|
-| 作成 | `/Users/tsk/Sync/git/SpeakDrop/tests/test_clipboard_inserter.py` | テストファイル（先行作成） |
-| 変更 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/clipboard_inserter.py` | ClipboardInserter モジュール本実装 |
+| 作成 | `tests/test_clipboard_inserter.py` | テストファイル（先行作成） |
+| 変更 | `speakdrop/clipboard_inserter.py` | ClipboardInserter モジュール本実装 |
 
 ---
 
@@ -36,15 +36,15 @@ TDD原則に従い、pyobjcはpytest-mockでモックします。
 
 ### 参照すべきファイル
 
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/clipboard_inserter.py` - 現在のスタブ
+- `@speakdrop/clipboard_inserter.py` - 現在のスタブ
 
 ### 関連する設計書
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「ClipboardInserter」セクション（行322-350）
+- `@docs/sdd/design/design.md` の「ClipboardInserter」セクション（行322-350）
 
 ### 関連する要件
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-001.md` - プッシュトークによる音声入力
+- `@docs/sdd/requirements/stories/US-001.md` - プッシュトークによる音声入力
 
 ---
 
@@ -72,7 +72,7 @@ TDD原則に従い、pyobjcはpytest-mockでモックします。
 
 ### ステップ1: テストを先に作成（TDD）
 
-`/Users/tsk/Sync/git/SpeakDrop/tests/test_clipboard_inserter.py` を作成してください：
+`tests/test_clipboard_inserter.py` を作成してください：
 
 ```python
 """ClipboardInserter モジュールのテスト。"""
@@ -261,7 +261,7 @@ class TestClipboardInserterInsert:
 テストを実行して失敗を確認：
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_clipboard_inserter.py -v
 ```
 
@@ -273,7 +273,7 @@ test: test_clipboard_inserter.py - ClipboardInserter モジュールのTDDテス
 
 ### ステップ2: ClipboardInserter モジュールを実装
 
-`/Users/tsk/Sync/git/SpeakDrop/speakdrop/clipboard_inserter.py` を実装してください：
+`speakdrop/clipboard_inserter.py` を実装してください：
 
 ```python
 """クリップボード・テキスト挿入モジュール。
@@ -354,7 +354,7 @@ class ClipboardInserter:
 ### ステップ3: テストがパスすることを確認
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run pytest tests/test_clipboard_inserter.py -v
 uv run ruff check speakdrop/clipboard_inserter.py tests/test_clipboard_inserter.py
 uv run mypy speakdrop/clipboard_inserter.py

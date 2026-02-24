@@ -110,6 +110,9 @@ sys.modules.setdefault("Quartz.CoreGraphics", MagicMock())
 @pytest.fixture
 def app() -> Any:
     """SpeakDropApp インスタンスを返す（全依存をモック化）。"""
+    def _call_after(func: Any, *args: Any, **kwargs: Any) -> None:
+        func(*args, **kwargs)
+
     with (
         patch("speakdrop.app.AudioRecorder", return_value=MagicMock()),
         patch("speakdrop.app.Transcriber", return_value=MagicMock()),
@@ -118,7 +121,9 @@ def app() -> Any:
         patch("speakdrop.app.HotkeyListener", return_value=MagicMock()),
         patch("speakdrop.app.PermissionChecker") as mock_pc,
         patch("speakdrop.app.Config") as mock_cfg,
+        patch("speakdrop.app.AppHelper") as mock_app_helper,
     ):
+        mock_app_helper.callAfter.side_effect = _call_after
         mock_cfg_instance = MagicMock()
         mock_cfg_instance.enabled = True
         mock_cfg_instance.hotkey = "alt_r"
@@ -131,8 +136,7 @@ def app() -> Any:
         from speakdrop.app import SpeakDropApp
 
         instance = SpeakDropApp()
-        # HotkeyListener インスタンスをアクセスしやすくするため格納
-        return instance
+        yield instance
 
 
 # ---------------------------------------------------------------------------

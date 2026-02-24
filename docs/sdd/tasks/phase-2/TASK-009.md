@@ -20,7 +20,7 @@ NSImage（pyobjc）を使ってテキストベースのアイコンを描画し�
 
 | 操作 | ファイルパス | 説明 |
 |------|-------------|------|
-| 変更 | `/Users/tsk/Sync/git/SpeakDrop/speakdrop/icons.py` | Icons モジュール本実装 |
+| 変更 | `speakdrop/icons.py` | Icons モジュール本実装 |
 
 ---
 
@@ -34,16 +34,16 @@ NSImage（pyobjc）を使ってテキストベースのアイコンを描画し�
 
 ### 参照すべきファイル
 
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/icons.py` - 現在のスタブ
-- `@/Users/tsk/Sync/git/SpeakDrop/speakdrop/app.py` - AppState enum の定義場所（TASK-010で実装）
+- `@speakdrop/icons.py` - 現在のスタブ
+- `@speakdrop/app.py` - AppState enum の定義場所（TASK-010で実装）
 
 ### 関連する設計書
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/design/design.md` の「Icons」セクション（行452-471）
+- `@docs/sdd/design/design.md` の「Icons」セクション（行452-471）
 
 ### 関連する要件
 
-- `@/Users/tsk/Sync/git/SpeakDrop/docs/sdd/requirements/stories/US-001.md` の REQ-003, REQ-004
+- `@docs/sdd/requirements/stories/US-001.md` の REQ-003, REQ-004
 - NFR-007: アイコン状態変化を200ms以内に反映
 
 ---
@@ -65,7 +65,7 @@ NSImage（pyobjc）を使ってテキストベースのアイコンを描画し�
 
 ### ステップ1: Icons モジュールを実装
 
-`/Users/tsk/Sync/git/SpeakDrop/speakdrop/icons.py` を実装してください。
+`speakdrop/icons.py` を実装してください。
 
 **設計方針の選択**:
 
@@ -113,7 +113,7 @@ def get_icon_title(state: "AppState") -> str:
 ### ステップ2: 品質チェック
 
 ```bash
-cd /Users/tsk/Sync/git/SpeakDrop
+cd <project-root>
 uv run ruff check speakdrop/icons.py
 uv run mypy speakdrop/icons.py
 ```
