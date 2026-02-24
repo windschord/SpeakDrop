@@ -5,13 +5,17 @@ NFR-007: 状態変化を 200ms 以内に反映するため、シンプルな文�
 """
 from __future__ import annotations
 
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 
+@runtime_checkable
 class _HasName(Protocol):
     """name 属性を持つオブジェクトのプロトコル（AppState 互換）。"""
 
-    name: str
+    @property
+    def name(self) -> str:
+        """状態名を返す。"""
+        ...
 
 
 # 状態別のアイコン文字列（タイトル方式）

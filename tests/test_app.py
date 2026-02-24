@@ -239,11 +239,12 @@ class TestHotkeyCallbacks:
         mock_audio = MagicMock()
         app.audio_recorder.stop_recording.return_value = mock_audio
 
-        app.on_hotkey_release()
-
-        app.audio_recorder.stop_recording.assert_called_once()
-        # スレッド起動を待つ前の状態は PROCESSING
-        assert app.state == AppState.PROCESSING
+        # スレッドが即座に完了しないよう process_audio をパッチ
+        with patch.object(app, "process_audio"):
+            app.on_hotkey_release()
+            # スレッド起動後、set_state(PROCESSING) が呼ばれていること
+            app.audio_recorder.stop_recording.assert_called_once()
+            assert app.state == AppState.PROCESSING
 
     def test_on_hotkey_release_ignored_when_not_recording(self, app: Any) -> None:
         """RECORDING 以外の状態では on_hotkey_release() は何もしない。"""
