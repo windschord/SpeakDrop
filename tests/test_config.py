@@ -2,8 +2,6 @@
 import json
 from pathlib import Path
 
-import pytest
-
 from speakdrop.config import CONFIG_PATH, Config
 
 
