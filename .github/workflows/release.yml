@@ -36,6 +36,7 @@ jobs:
         run: |
           uv run pyinstaller \
             --windowed \
+            --icon NONE \
             --name "SpeakDrop" \
             --osx-bundle-identifier "com.speakdrop.app" \
             --collect-all "rumps" \
