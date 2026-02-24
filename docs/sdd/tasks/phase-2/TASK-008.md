@@ -201,7 +201,7 @@ uv run pytest tests/test_permissions.py -v
 
 コミット：
 
-```
+```text
 test: test_permissions.py - PermissionChecker モジュールのTDDテスト追加
 ```
 

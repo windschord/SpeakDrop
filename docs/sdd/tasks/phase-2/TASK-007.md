@@ -295,7 +295,7 @@ uv run pytest tests/test_hotkey_listener.py -v
 
 コミット：
 
-```
+```text
 test: test_hotkey_listener.py - HotkeyListener モジュールのTDDテスト追加
 ```
 

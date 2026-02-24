@@ -309,7 +309,7 @@ uv run mypy speakdrop/app.py
 
 ### ステップ3: コミット
 
-```
+```text
 feat: app.py - SpeakDropApp メインアプリ実装（全モジュール統合、AppState状態管理）
 ```
 

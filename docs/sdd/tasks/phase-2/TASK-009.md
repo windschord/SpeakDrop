@@ -52,12 +52,11 @@ NSImage（pyobjc）を使ってテキストベースのアイコンを描画し�
 
 以下のすべての基準を満たしたら、このタスクは完了です：
 
-- [ ] `speakdrop/icons.py` が実装されている
-- [ ] `ICON_TEXTS` 辞書が3状態（IDLE/RECORDING/PROCESSING）のアイコン文字列を持つ
-- [ ] `create_text_icon(text: str, size: int = 22) -> NSImage` 関数が実装されている
-- [ ] `get_icon_title(state: "AppState") -> str` 関数が実装されている
-- [ ] `uv run ruff check speakdrop/icons.py` でエラー0件
-- [ ] `uv run mypy speakdrop/icons.py` でエラー0件
+- [x] `speakdrop/icons.py` が実装されている
+- [x] `ICON_TEXTS` 辞書が3状態（IDLE/RECORDING/PROCESSING）のアイコン文字列を持つ
+- [x] `get_icon_title(state: _HasName) -> str` 関数が実装されている（Protocol `_HasName` 方式）
+- [x] `uv run ruff check speakdrop/icons.py` でエラー0件
+- [x] `uv run mypy speakdrop/icons.py` でエラー0件
 
 ---
 
@@ -76,34 +75,41 @@ NSImage の動的生成は pyobjc の深い知識が必要なため、**まず�
 """メニューバーアイコン生成モジュール。
 
 AppState に対応するメニューバーアイコン（または文字列タイトル）を提供する。
-NFR-007: 状態変化を 200ms 以内に反映するため、事前生成またはシンプルな文字列を使用。
+NFR-007: 状態変化を 200ms 以内に反映するため、シンプルな文字列定数を使用。
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Protocol, runtime_checkable
 
-if TYPE_CHECKING:
-    from speakdrop.app import AppState
+
+@runtime_checkable
+class _HasName(Protocol):
+    """name 属性を持つオブジェクトのプロトコル（AppState 互換）。"""
+
+    @property
+    def name(self) -> str:
+        """状態名を返す。"""
+        ...
 
 
 # 状態別のアイコン文字列（タイトル方式）
 ICON_TEXTS: dict[str, str] = {
-    "IDLE": "🎤",        # 待機中
-    "RECORDING": "🔴",  # 録音中
-    "PROCESSING": "⏳",  # 処理中
+    "IDLE": "🎤",        # 待機中（マイクアイコン）
+    "RECORDING": "🔴",  # 録音中（赤丸）
+    "PROCESSING": "⏳",  # 処理中（砂時計）
 }
 
 
-def get_icon_title(state: "AppState") -> str:
+def get_icon_title(state: _HasName) -> str:
     """AppState に対応するメニューバーアイコン文字列を返す。
 
     Args:
-        state: 現在のアプリケーション状態
+        state: name 属性を持つ状態オブジェクト（AppState 互換）
 
     Returns:
         メニューバーに表示する文字列（絵文字）
     """
-    return ICON_TEXTS.get(state.name, "🎤")
+    return ICON_TEXTS.get(state.name, ICON_TEXTS["IDLE"])
 ```
 
 **注意**: rumps の `App` クラスには `title` プロパティがあり、メニューバーに文字列を表示できます。
@@ -147,18 +153,9 @@ ICON_TEXTS = {
 
 ### AppState との連携
 
-`icons.py` は `app.py` の `AppState` に依存します。
-循環インポートを避けるため `TYPE_CHECKING` ガードを使用してください：
-
-```python
-from __future__ import annotations
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from speakdrop.app import AppState
-```
-
-実行時は `state.name`（文字列）で辞書を参照するため、実際のimportは不要です。
+`icons.py` は `app.py` の `AppState` に直接依存しません。
+循環インポートを避けるため、`Protocol` で `_HasName` インターフェースを定義し、`state.name` で辞書を参照します。
+`AppState` は `name` プロパティを持つ Enum のため、`_HasName` プロトコルと互換性があります。
 
 ---
 

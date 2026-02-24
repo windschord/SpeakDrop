@@ -208,7 +208,7 @@ uv run pytest tests/test_config.py -v
 
 コミット：
 
-```
+```text
 test: test_config.py - Config モジュールのTDDテスト追加
 ```
 

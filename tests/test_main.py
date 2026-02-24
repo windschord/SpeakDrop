@@ -18,15 +18,15 @@ class TestMain:
 
             mock_app_class.assert_called_once()
 
-    def test_main_calls_check_permissions(self) -> None:
-        """main() が check_permissions() を呼ぶことを確認する。"""
+    def test_main_does_not_call_check_permissions_explicitly(self) -> None:
+        """main() が check_permissions() を明示的に呼ばないことを確認する（SpeakDropApp.__init__ 内で処理される）。"""
         with patch("speakdrop.__main__.SpeakDropApp") as mock_app_class:
             mock_app = MagicMock()
             mock_app_class.return_value = mock_app
 
             main()
 
-            mock_app.check_permissions.assert_called_once()
+            mock_app.check_permissions.assert_not_called()
 
     def test_main_calls_run(self) -> None:
         """main() が run() を呼ぶことを確認する。"""

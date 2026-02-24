@@ -171,7 +171,7 @@ uv run pytest tests/test_text_processor.py -v
 
 コミット：
 
-```
+```text
 test: test_text_processor.py - TextProcessor モジュールのTDDテスト追加
 ```
 

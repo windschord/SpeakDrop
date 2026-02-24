@@ -194,7 +194,7 @@ uv run pytest tests/test_audio_recorder.py -v
 
 コミット：
 
-```
+```text
 test: test_audio_recorder.py - AudioRecorder モジュールのTDDテスト追加
 ```
 
@@ -291,7 +291,7 @@ uv run mypy speakdrop/audio_recorder.py
 
 ### ステップ4: コミット
 
-```
+```text
 feat: audio_recorder.py - AudioRecorder 実装（16kHz/Mono/int16録音、NFR-004/006）
 ```
 
@@ -346,7 +346,7 @@ class AudioRecorder:
 | 項目 | 値 |
 |------|-----|
 | **タスクID** | TASK-003 |
-| **ステータス** | `TODO` |
+| **ステータス** | `DONE` |
 | **推定工数** | 30分 |
 | **依存関係** | [TASK-001](../phase-1/TASK-001.md) @../phase-1/TASK-001.md |
 | **対応要件** | REQ-001, REQ-002, NFR-004, NFR-006 |
@@ -374,8 +374,8 @@ class AudioRecorder:
 
 ## 作業ログ（実装時に記入）
 
-### YYYY-MM-DD
-- **作業内容**:
-- **発生した問題**:
-- **解決方法**:
-- **コミットハッシュ**:
+### 2026-02-24
+- **作業内容**: AudioRecorder クラスの TDD 実装（sounddevice ベース）
+- **発生した問題**: なし
+- **解決方法**: -
+- **コミットハッシュ**: 8feb8e4

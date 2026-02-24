@@ -133,7 +133,7 @@ uv run pytest --cov=speakdrop --cov-fail-under=80
 
 全チェック通過後にコミット：
 
-```
+```text
 test: 結合テスト・品質チェック完了（ruff/mypy/pytest-cov 80%以上、NFR-009/010）
 ```
 

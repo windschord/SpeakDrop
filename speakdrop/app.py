@@ -55,7 +55,7 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         self.status_item.set_callback(None)  # クリック不可
 
         self.toggle_item = rumps.MenuItem(
-            "音声入力 ON",
+            "音声入力 ON" if self.config.enabled else "音声入力 OFF",
             callback=self._toggle_enabled,
         )
 
@@ -102,15 +102,9 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         )
         self.hotkey_listener.start()
 
-    def set_state(self, state: AppState) -> None:
-        """状態を遷移し、アイコンとメニューを更新する（NFR-007: 200ms以内）。
-
-        Args:
-            state: 新しいアプリケーション状態
-        """
-        self.state = state
+    def _apply_state_ui(self, state: AppState) -> None:
+        """状態に応じてUIを更新する（メインスレッドで実行される）。"""
         self.title = get_icon_title(state)
-
         state_labels = {
             AppState.IDLE: "待機中",
             AppState.RECORDING: "録音中...",
@@ -118,13 +112,18 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         }
         self.status_item.title = state_labels[state]
 
+    def set_state(self, state: AppState) -> None:
+        """状態を遷移し、UIをメインスレッドで更新する（NFR-007: 200ms以内）。"""
+        self.state = state
+        AppHelper.callAfter(self._apply_state_ui, state)
+
     def on_hotkey_press(self) -> None:
         """ホットキー押下コールバック（REQ-001）。"""
         if not self.config.enabled:
             return
         if self.state != AppState.IDLE:
             return
-        AppHelper.callAfter(self.set_state, AppState.RECORDING)
+        self.set_state(AppState.RECORDING)
         self.audio_recorder.start_recording()
 
     def on_hotkey_release(self) -> None:
@@ -132,7 +131,7 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         if self.state != AppState.RECORDING:
             return
         audio = self.audio_recorder.stop_recording()
-        AppHelper.callAfter(self.set_state, AppState.PROCESSING)
+        self.set_state(AppState.PROCESSING)
         thread = threading.Thread(
             target=self.process_audio,
             args=(audio,),
@@ -141,7 +140,7 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         thread.start()
 
     def process_audio(self, audio: np.ndarray) -> None:
-        """音声認識→テキスト後処理→挿入を実行する（別スレッドで動作）。
+        """音声認識→テキスト後処理を実行する（別スレッドで動作）。
 
         Args:
             audio: 録音音声データ
@@ -149,10 +148,11 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         try:
             text = self.transcriber.transcribe(audio)
             if not text.strip():
+                self.set_state(AppState.IDLE)
                 return
 
             processed = self.text_processor.process(text)
-            self.clipboard_inserter.insert(processed)
+            AppHelper.callAfter(self._finish_processing, processed)
         except Exception as e:
             AppHelper.callAfter(
                 rumps.notification,
@@ -160,11 +160,35 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
                 subtitle="音声処理に失敗しました",
                 message=str(e),
             )
+            self.set_state(AppState.IDLE)
+
+    def _finish_processing(self, text: str) -> None:
+        """クリップボード挿入と状態リセットをメインスレッドで実行する。
+
+        Args:
+            text: 挿入するテキスト
+        """
+        try:
+            self.clipboard_inserter.insert(text)
+        except Exception as e:
+            rumps.notification(
+                title="SpeakDrop エラー",
+                subtitle="音声処理に失敗しました",
+                message=str(e),
+            )
         finally:
-            AppHelper.callAfter(self.set_state, AppState.IDLE)
+            self.set_state(AppState.IDLE)
 
     def _toggle_enabled(self, sender: rumps.MenuItem) -> None:
         """音声入力の有効/無効を切り替える（REQ-012）。"""
+        if not self.config.enabled and not self.check_permissions():
+            rumps.notification(
+                title="SpeakDrop",
+                subtitle="権限が必要です",
+                message="マイクとアクセシビリティの権限を許可してください",
+            )
+            return
+
         self.config.enabled = not self.config.enabled
         self.config.save()
 

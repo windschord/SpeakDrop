@@ -165,7 +165,7 @@ class ClassName:
     pass
 ```
 
-### __main__.py スタブ
+### `__main__.py` スタブ
 
 ```python
 """SpeakDrop エントリーポイント。"""
