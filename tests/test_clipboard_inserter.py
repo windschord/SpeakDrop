@@ -1,9 +1,6 @@
 """ClipboardInserter モジュールのテスト。"""
 import sys
-from typing import Any
-from unittest.mock import MagicMock, call, patch
-
-import pytest
+from unittest.mock import MagicMock, patch
 
 
 # pyobjc は macOS 専用のため、テスト用にモジュールをモック化
