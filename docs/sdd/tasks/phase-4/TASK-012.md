@@ -55,12 +55,12 @@
 
 以下のすべての基準を満たしたら、このタスクは完了です：
 
-- [ ] `uv run ruff check .` でエラー0件（NFR-009）
-- [ ] `uv run ruff format --check .` で差分なし（NFR-009）
-- [ ] `uv run mypy .` でエラー0件（NFR-009）
-- [ ] `uv run pytest --cov=speakdrop --cov-report=term-missing` でカバレッジ80%以上（NFR-010）
-- [ ] `uv run pytest --cov=speakdrop --cov-fail-under=80` が成功
-- [ ] 全テストがパスする
+- [x] `uv run ruff check .` でエラー0件（NFR-009）
+- [x] `uv run ruff format --check .` で差分なし（NFR-009）
+- [x] `uv run mypy .` でエラー0件（NFR-009）
+- [x] `uv run pytest --cov=speakdrop --cov-report=term-missing` でカバレッジ92.39%（目標80%以上、NFR-010）
+- [x] `uv run pytest --cov=speakdrop --cov-fail-under=80` が成功
+- [x] 全98テストがパスする
 
 ---
 
@@ -185,7 +185,7 @@ def test_process_fallback_on_timeout():
 | 項目 | 値 |
 |------|-----|
 | **タスクID** | TASK-012 |
-| **ステータス** | `IN_PROGRESS` |
+| **ステータス** | `DONE` |
 | **推定工数** | 40分 |
 | **依存関係** | TASK-002〜011 すべて完了後 |
 | **対応要件** | NFR-009, NFR-010 |
@@ -211,8 +211,14 @@ def test_process_fallback_on_timeout():
 
 ## 作業ログ（実装時に記入）
 
-### YYYY-MM-DD
-- **作業内容**:
+### 2026-02-24
+- **作業内容**: ruff lint/format、mypy型チェック、pytest-covを実行し品質基準を充足
 - **発生した問題**:
+  1. test_app.py に未使用インポート（threading, call, numpy）と F821（未定義名 SpeakDropApp）
+  2. test_icons.py に不要な type: ignore コメント
+  3. test_app.py のモジュールレベル sys.modules モックが numpy を汚染し、test_audio_recorder.py の 3 テストが失敗
 - **解決方法**:
-- **コミットハッシュ**:
+  1. 未使用インポート削除、型アノテーションを Any に変更
+  2. type: ignore コメント削除（mypy が FakeState を _HasName 互換と正しく認識するため）
+  3. tests/conftest.py を新規作成し、テスト収集前に numpy を先行ロードして setdefault による上書きを防止
+- **コミットハッシュ**: 48c14a4
