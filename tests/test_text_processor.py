@@ -1,8 +1,6 @@
 """TextProcessor モジュールのテスト。"""
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from speakdrop.text_processor import TextProcessor
 
 
