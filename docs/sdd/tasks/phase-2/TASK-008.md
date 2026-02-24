@@ -327,7 +327,7 @@ class PermissionChecker:
 | 項目 | 値 |
 |------|-----|
 | **タスクID** | TASK-008 |
-| **ステータス** | `IN_PROGRESS` |
+| **ステータス** | `DONE` |
 | **推定工数** | 25分 |
 | **依存関係** | [TASK-001](../phase-1/TASK-001.md) @../phase-1/TASK-001.md |
 | **対応要件** | REQ-021, REQ-022 |
@@ -355,8 +355,8 @@ class PermissionChecker:
 
 ## 作業ログ（実装時に記入）
 
-### YYYY-MM-DD
-- **作業内容**:
-- **発生した問題**:
-- **解決方法**:
-- **コミットハッシュ**:
+### 2026-02-24
+- **作業内容**: TDD方式でPermissionCheckerモジュールを実装。テスト7件作成後、実装コードを完成。
+- **発生した問題**: AVAuthorizationStatusAuthorized/NotDeterminedの定数がモック時にMagicMockになり比較が失敗した。
+- **解決方法**: 定数を数値リテラル（0, 3）でモジュール内に定義し、pyobjcの定数に依存しないようにした。
+- **コミットハッシュ**: 6da9857
