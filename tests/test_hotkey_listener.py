@@ -1,7 +1,6 @@
 """HotkeyListener モジュールのテスト。"""
 from unittest.mock import MagicMock, patch
 
-import pytest
 
 from speakdrop.hotkey_listener import HotkeyListener
 
