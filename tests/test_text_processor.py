@@ -1,4 +1,5 @@
 """TextProcessor モジュールのテスト。"""
+
 from unittest.mock import MagicMock, patch
 
 from speakdrop.text_processor import TextProcessor
@@ -32,9 +33,7 @@ class TestTextProcessorProcess:
         assert result == "こんにちは、世界。"
 
     @patch("speakdrop.text_processor.ollama")
-    def test_process_calls_ollama_with_correct_model(
-        self, mock_ollama: MagicMock
-    ) -> None:
+    def test_process_calls_ollama_with_correct_model(self, mock_ollama: MagicMock) -> None:
         """Ollama に正しいモデルを指定して呼び出すこと。"""
         mock_response = MagicMock()
         mock_response.message.content = "テスト。"
@@ -47,9 +46,7 @@ class TestTextProcessorProcess:
         assert call_kwargs["model"] == "qwen2.5:7b"
 
     @patch("speakdrop.text_processor.ollama")
-    def test_process_fallback_on_connection_error(
-        self, mock_ollama: MagicMock
-    ) -> None:
+    def test_process_fallback_on_connection_error(self, mock_ollama: MagicMock) -> None:
         """Ollama 未起動時（接続エラー）は元テキストを返すこと（REQ-009）。"""
         mock_ollama.chat.side_effect = Exception("Connection refused")
 

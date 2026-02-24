@@ -1,4 +1,5 @@
 """ClipboardInserter モジュールのテスト。"""
+
 import sys
 from unittest.mock import MagicMock, patch
 

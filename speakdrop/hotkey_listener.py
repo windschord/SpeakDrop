@@ -3,6 +3,7 @@
 pynput を使ってグローバルキーボードイベントを監視する。
 アクセシビリティ権限が必要（REQ-022）。
 """
+
 from collections.abc import Callable
 from typing import Any
 

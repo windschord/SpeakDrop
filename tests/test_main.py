@@ -1,4 +1,5 @@
 """tests/test_main.py - __main__.py のテスト。"""
+
 from unittest.mock import MagicMock, patch
 
 from speakdrop.__main__ import main

@@ -2,6 +2,7 @@
 
 rumps.App を継承した SpeakDropApp クラスで全モジュールを統合する。
 """
+
 from __future__ import annotations
 
 import threading
@@ -23,8 +24,8 @@ from speakdrop.transcriber import Transcriber
 class AppState(Enum):
     """アプリケーションの状態を表す列挙型。"""
 
-    IDLE = auto()        # 待機中（ホットキー監視中）
-    RECORDING = auto()   # 録音中（ホットキー押下中）
+    IDLE = auto()  # 待機中（ホットキー監視中）
+    RECORDING = auto()  # 録音中（ホットキー押下中）
     PROCESSING = auto()  # 処理中（認識・後処理・挿入中）
 
 

@@ -3,6 +3,7 @@
 faster-whisper を使って日本語音声認識を行う。
 モデルは遅延ロード（初回transcribe()呼び出し時）。
 """
+
 import numpy as np
 from faster_whisper import WhisperModel
 

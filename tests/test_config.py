@@ -1,4 +1,5 @@
 """Config モジュールのテスト。"""
+
 import json
 from pathlib import Path
 

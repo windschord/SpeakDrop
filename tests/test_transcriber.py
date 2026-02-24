@@ -1,4 +1,5 @@
 """Transcriber モジュールのテスト。"""
+
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -29,9 +30,7 @@ class TestTranscriberTranscribe:
     """Transcriber.transcribe() のテスト。"""
 
     @patch("speakdrop.transcriber.WhisperModel")
-    def test_transcribe_loads_model_on_first_call(
-        self, mock_whisper_model: MagicMock
-    ) -> None:
+    def test_transcribe_loads_model_on_first_call(self, mock_whisper_model: MagicMock) -> None:
         """transcribe() 初回呼び出し時にモデルをロードすること。"""
         mock_model = MagicMock()
         mock_model.transcribe.return_value = (iter([]), MagicMock())
@@ -44,9 +43,7 @@ class TestTranscriberTranscribe:
         mock_whisper_model.assert_called_once()
 
     @patch("speakdrop.transcriber.WhisperModel")
-    def test_transcribe_does_not_reload_model(
-        self, mock_whisper_model: MagicMock
-    ) -> None:
+    def test_transcribe_does_not_reload_model(self, mock_whisper_model: MagicMock) -> None:
         """transcribe() 2回目以降はモデルをロードしないこと。"""
         mock_model = MagicMock()
         mock_model.transcribe.return_value = (iter([]), MagicMock())
@@ -76,9 +73,7 @@ class TestTranscriberTranscribe:
         assert result == "こんにちは"
 
     @patch("speakdrop.transcriber.WhisperModel")
-    def test_transcribe_joins_multiple_segments(
-        self, mock_whisper_model: MagicMock
-    ) -> None:
+    def test_transcribe_joins_multiple_segments(self, mock_whisper_model: MagicMock) -> None:
         """複数セグメントを結合して返すこと。"""
         seg1 = MagicMock()
         seg1.text = "こんにちは、"
@@ -110,9 +105,7 @@ class TestTranscriberTranscribe:
         assert result == ""
 
     @patch("speakdrop.transcriber.WhisperModel")
-    def test_transcribe_uses_japanese_language(
-        self, mock_whisper_model: MagicMock
-    ) -> None:
+    def test_transcribe_uses_japanese_language(self, mock_whisper_model: MagicMock) -> None:
         """transcribe() が language='ja' を指定すること。"""
         mock_model = MagicMock()
         mock_model.transcribe.return_value = (iter([]), MagicMock())
@@ -130,9 +123,7 @@ class TestTranscriberReloadModel:
     """Transcriber.reload_model() のテスト。"""
 
     @patch("speakdrop.transcriber.WhisperModel")
-    def test_reload_model_changes_model_id(
-        self, mock_whisper_model: MagicMock
-    ) -> None:
+    def test_reload_model_changes_model_id(self, mock_whisper_model: MagicMock) -> None:
         """reload_model() がモデルIDを変更すること。"""
         mock_model = MagicMock()
         mock_whisper_model.return_value = mock_model
@@ -143,9 +134,7 @@ class TestTranscriberReloadModel:
         assert transcriber._model_id == "medium"
 
     @patch("speakdrop.transcriber.WhisperModel")
-    def test_reload_model_resets_model_instance(
-        self, mock_whisper_model: MagicMock
-    ) -> None:
+    def test_reload_model_resets_model_instance(self, mock_whisper_model: MagicMock) -> None:
         """reload_model() が古いモデルインスタンスをリセットすること。"""
         mock_model = MagicMock()
         mock_model.transcribe.return_value = (iter([]), MagicMock())

@@ -2,6 +2,7 @@
 
 設定を ~/.config/speakdrop/config.json に保存・読み込みする。
 """
+
 from dataclasses import asdict, dataclass
 import json
 from pathlib import Path

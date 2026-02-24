@@ -1,4 +1,5 @@
 """HotkeyListener モジュールのテスト。"""
+
 from unittest.mock import MagicMock, patch
 
 
@@ -112,9 +113,7 @@ class TestHotkeyListenerCallbacks:
         on_press.assert_called_once()
 
     @patch("speakdrop.hotkey_listener.keyboard")
-    def test_on_press_not_called_for_other_key(
-        self, mock_keyboard: MagicMock
-    ) -> None:
+    def test_on_press_not_called_for_other_key(self, mock_keyboard: MagicMock) -> None:
         """対象外キー押下時に on_press コールバックが呼ばれないこと。"""
         on_press = MagicMock()
         listener = HotkeyListener(
@@ -150,9 +149,7 @@ class TestHotkeyListenerCaptureMode:
     """HotkeyListener のキャプチャモードテスト（REQ-015）。"""
 
     @patch("speakdrop.hotkey_listener.keyboard")
-    def test_capture_mode_calls_callback_with_key_name(
-        self, mock_keyboard: MagicMock
-    ) -> None:
+    def test_capture_mode_calls_callback_with_key_name(self, mock_keyboard: MagicMock) -> None:
         """キャプチャモード中のキー押下でコールバックが呼ばれること（REQ-015）。"""
         capture_callback = MagicMock()
         listener = HotkeyListener(
@@ -169,9 +166,7 @@ class TestHotkeyListenerCaptureMode:
         capture_callback.assert_called_once_with("ctrl_r")
 
     @patch("speakdrop.hotkey_listener.keyboard")
-    def test_capture_mode_disables_normal_callbacks(
-        self, mock_keyboard: MagicMock
-    ) -> None:
+    def test_capture_mode_disables_normal_callbacks(self, mock_keyboard: MagicMock) -> None:
         """キャプチャモード中は通常のホットキーコールバックが無効になること。"""
         on_press = MagicMock()
         listener = HotkeyListener(
@@ -188,9 +183,7 @@ class TestHotkeyListenerCaptureMode:
         on_press.assert_not_called()
 
     @patch("speakdrop.hotkey_listener.keyboard")
-    def test_capture_mode_ends_after_first_key(
-        self, mock_keyboard: MagicMock
-    ) -> None:
+    def test_capture_mode_ends_after_first_key(self, mock_keyboard: MagicMock) -> None:
         """キャプチャモードは最初のキー押下後に終了すること。"""
         capture_callback = MagicMock()
         listener = HotkeyListener(

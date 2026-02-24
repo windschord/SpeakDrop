@@ -3,6 +3,7 @@
 AppState に対応するメニューバーアイコン（または文字列タイトル）を提供する。
 NFR-007: 状態変化を 200ms 以内に反映するため、シンプルな文字列定数を使用。
 """
+
 from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
@@ -20,7 +21,7 @@ class _HasName(Protocol):
 
 # 状態別のアイコン文字列（タイトル方式）
 ICON_TEXTS: dict[str, str] = {
-    "IDLE": "🎤",        # 待機中（マイクアイコン）
+    "IDLE": "🎤",  # 待機中（マイクアイコン）
     "RECORDING": "🔴",  # 録音中（赤丸）
     "PROCESSING": "⏳",  # 処理中（砂時計）
 }

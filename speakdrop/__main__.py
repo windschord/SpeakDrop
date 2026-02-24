@@ -4,6 +4,7 @@
     uv run speakdrop
     python -m speakdrop
 """
+
 from speakdrop.app import SpeakDropApp
 
 

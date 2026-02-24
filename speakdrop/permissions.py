@@ -3,6 +3,7 @@
 マイク権限（AVFoundation）とアクセシビリティ権限（ApplicationServices）を確認する。
 権限不足の場合はユーザーに案内する（REQ-021, REQ-022）。
 """
+
 from AVFoundation import (
     AVCaptureDevice,
     AVMediaTypeAudio,

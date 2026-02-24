@@ -1,4 +1,5 @@
 """Icons モジュールのテスト。"""
+
 from speakdrop import icons
 
 
@@ -47,7 +48,7 @@ def test_get_icon_title_returns_idle_for_unknown_state() -> None:
     class FakeState:
         name = "UNKNOWN"
 
-    result = icons.get_icon_title(FakeState())  # type: ignore[arg-type]
+    result = icons.get_icon_title(FakeState())
     assert result == icons.ICON_TEXTS["IDLE"]
 
 
@@ -59,5 +60,5 @@ def test_get_icon_title_returns_correct_icon_for_each_state() -> None:
             self.name = name
 
     for state_name, expected_icon in icons.ICON_TEXTS.items():
-        result = icons.get_icon_title(FakeState(state_name))  # type: ignore[arg-type]
+        result = icons.get_icon_title(FakeState(state_name))
         assert result == expected_icon, f"{state_name} のアイコンが一致しない"

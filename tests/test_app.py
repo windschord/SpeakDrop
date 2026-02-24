@@ -3,13 +3,13 @@
 rumps をモック化して、AppState 状態管理・ホットキーコールバック・
 トグル機能を検証する。
 """
+
 from __future__ import annotations
 
 import sys
-import threading
 from enum import Enum
 from typing import Any
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -17,6 +17,7 @@ import pytest
 # ---------------------------------------------------------------------------
 # rumps のモック（テスト環境では AppKit が利用できないため）
 # ---------------------------------------------------------------------------
+
 
 class _FakeMenuItem:
     """rumps.MenuItem のフェイク実装。"""
@@ -32,7 +33,9 @@ class _FakeMenuItem:
 class _FakeApp:
     """rumps.App のフェイク実装。"""
 
-    def __init__(self, name: str, title: str | None = None, quit_button: str | None = "Quit") -> None:
+    def __init__(
+        self, name: str, title: str | None = None, quit_button: str | None = "Quit"
+    ) -> None:
         self.name = name
         self.title = title or name
         self.menu: list[Any] = []
@@ -103,8 +106,9 @@ sys.modules.setdefault("Quartz.CoreGraphics", MagicMock())
 # フィクスチャ
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
-def app() -> "SpeakDropApp":  # type: ignore[name-defined]
+def app() -> Any:
     """SpeakDropApp インスタンスを返す（全依存をモック化）。"""
     with (
         patch("speakdrop.app.AudioRecorder", return_value=MagicMock()),
@@ -125,6 +129,7 @@ def app() -> "SpeakDropApp":  # type: ignore[name-defined]
         mock_pc.return_value.check_accessibility.return_value = True
 
         from speakdrop.app import SpeakDropApp
+
         instance = SpeakDropApp()
         # HotkeyListener インスタンスをアクセスしやすくするため格納
         return instance
@@ -133,6 +138,7 @@ def app() -> "SpeakDropApp":  # type: ignore[name-defined]
 # ---------------------------------------------------------------------------
 # テスト
 # ---------------------------------------------------------------------------
+
 
 class TestAppState:
     """AppState enum のテスト。"""
@@ -312,7 +318,6 @@ class TestProcessAudio:
 
     def test_process_audio_calls_transcribe_and_insert(self, app: Any) -> None:
         """process_audio() が transcribe → text_processor.process → insert の順に呼ぶ。"""
-        import numpy as np
         from speakdrop.app import AppState
 
         mock_audio = MagicMock()

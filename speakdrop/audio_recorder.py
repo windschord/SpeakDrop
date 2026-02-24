@@ -3,6 +3,7 @@
 sounddevice を使って16kHz/Mono/16bit PCM形式でマイク録音を行う。
 録音データはメモリ上にのみ保持し、stop_recording() 後に破棄する（NFR-006）。
 """
+
 import threading
 from typing import Any
 

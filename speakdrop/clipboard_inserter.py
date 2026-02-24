@@ -4,6 +4,7 @@ NSPasteboard でクリップボードを操作し、
 CGEvent で Cmd+V キーストロークを送信してテキストを挿入する。
 挿入前後にクリップボード内容を退避・復元する（REQ-006）。
 """
+
 import time
 
 from AppKit import NSPasteboardTypeString
@@ -23,7 +24,7 @@ _KEY_V = 0x09
 class ClipboardInserter:
     """クリップボード経由でテキストを挿入するクラス。"""
 
-    PASTE_DELAY: float = 0.05   # Cmd+V 送信前の待機時間（秒）
+    PASTE_DELAY: float = 0.05  # Cmd+V 送信前の待機時間（秒）
     RESTORE_DELAY: float = 0.1  # クリップボード復元前の待機時間（秒）
 
     def insert(self, text: str) -> None:
