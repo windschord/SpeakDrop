@@ -49,12 +49,12 @@
 
 以下のすべての基準を満たしたら、このタスクは完了です：
 
-- [ ] `speakdrop/__main__.py` が実装されている
-- [ ] `main()` 関数が定義されている
-- [ ] `SpeakDropApp().run()` を呼び出してアプリを起動する
-- [ ] `pyproject.toml` の `[project.scripts]` で `speakdrop = "speakdrop.__main__:main"` が設定されている
-- [ ] `uv run ruff check speakdrop/__main__.py` でエラー0件
-- [ ] `uv run mypy speakdrop/__main__.py` でエラー0件
+- [x] `speakdrop/__main__.py` が実装されている
+- [x] `main()` 関数が定義されている
+- [x] `SpeakDropApp().run()` を呼び出してアプリを起動する
+- [x] `pyproject.toml` の `[project.scripts]` で `speakdrop = "speakdrop.__main__:main"` が設定されている
+- [x] `uv run ruff check speakdrop/__main__.py` でエラー0件
+- [x] `uv run mypy speakdrop/__main__.py` でエラー0件
 
 ---
 
@@ -151,7 +151,7 @@ def main() -> None:
 | 項目 | 値 |
 |------|-----|
 | **タスクID** | TASK-011 |
-| **ステータス** | `IN_PROGRESS` |
+| **ステータス** | `DONE` |
 | **推定工数** | 10分 |
 | **依存関係** | [TASK-010](TASK-010.md) @TASK-010.md |
 | **対応要件** | REQ-010, REQ-021, REQ-022 |
@@ -177,8 +177,8 @@ def main() -> None:
 
 ## 作業ログ（実装時に記入）
 
-### YYYY-MM-DD
-- **作業内容**:
-- **発生した問題**:
-- **解決方法**:
-- **コミットハッシュ**:
+### 2026-02-24
+- **作業内容**: speakdrop/__main__.py を実装。main() 関数で SpeakDropApp 初期化 → check_permissions() → run() の起動シーケンスを実装。app.py に check_permissions() メソッドを追加。tests/test_main.py を TDD で作成（3件すべてパス）。
+- **発生した問題**: app.py に check_permissions() メソッドが未実装だったため追加した
+- **解決方法**: SpeakDropApp に check_permissions() メソッドを追加（__init__ 内の権限チェックを切り出し）
+- **コミットハッシュ**: 43fbc94
