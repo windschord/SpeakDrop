@@ -56,7 +56,7 @@
 | TASK-002 | Config モジュール（TDD） | `TODO` | TASK-001 | 25min | [詳細](phase-2/TASK-002.md) @phase-2/TASK-002.md |
 | TASK-003 | AudioRecorder モジュール（TDD） | `TODO` | TASK-001 | 30min | [詳細](phase-2/TASK-003.md) @phase-2/TASK-003.md |
 | TASK-004 | Transcriber モジュール（TDD） | `TODO` | TASK-001 | 30min | [詳細](phase-2/TASK-004.md) @phase-2/TASK-004.md |
-| TASK-005 | TextProcessor モジュール（TDD） | `TODO` | TASK-001 | 25min | [詳細](phase-2/TASK-005.md) @phase-2/TASK-005.md |
+| TASK-005 | TextProcessor モジュール（TDD） | `IN_PROGRESS` | TASK-001 | 25min | [詳細](phase-2/TASK-005.md) @phase-2/TASK-005.md |
 | TASK-006 | ClipboardInserter モジュール（TDD） | `TODO` | TASK-001 | 35min | [詳細](phase-2/TASK-006.md) @phase-2/TASK-006.md |
 | TASK-007 | HotkeyListener モジュール（TDD） | `TODO` | TASK-001 | 30min | [詳細](phase-2/TASK-007.md) @phase-2/TASK-007.md |
 | TASK-008 | PermissionChecker モジュール（TDD） | `TODO` | TASK-001 | 25min | [詳細](phase-2/TASK-008.md) @phase-2/TASK-008.md |
