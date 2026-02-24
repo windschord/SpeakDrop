@@ -2,8 +2,6 @@
 import sys
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 
 # pyobjc は macOS 専用のため、テスト用にモジュールをモック化
 def _setup_pyobjc_mocks() -> None:
