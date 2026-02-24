@@ -28,6 +28,7 @@ dev-dependencies = [
     "pytest-cov>=4.0.0",
     "mypy>=1.0.0",
     "ruff>=0.4.0",
+    "xenon>=0.9.0",
 ]
 
 [tool.ruff]
