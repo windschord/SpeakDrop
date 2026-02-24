@@ -68,7 +68,7 @@
 | タスクID | タイトル | ステータス | 依存 | 見積 | 詳細リンク |
 |----------|---------|-----------|------|------|-----------|
 | TASK-010 | SpeakDropApp（app.py） | `DONE` | TASK-002〜009 | 60min | [詳細](phase-3/TASK-010.md) @phase-3/TASK-010.md |
-| TASK-011 | エントリーポイント（__main__.py） | `TODO` | TASK-010 | 10min | [詳細](phase-3/TASK-011.md) @phase-3/TASK-011.md |
+| TASK-011 | エントリーポイント（__main__.py） | `IN_PROGRESS` | TASK-010 | 10min | [詳細](phase-3/TASK-011.md) @phase-3/TASK-011.md |
 
 ### Phase 4: 品質保証
 *推定期間: 40分（AIエージェント作業時間）*
