@@ -91,6 +91,8 @@ jobs:
         run: |
           # バンドル全体をアドホック署名（Gatekeeper の「壊れている」エラーを回避）
           codesign --force --deep --sign - dist/SpeakDrop.app
+          # 署名の検証
+          codesign --verify --strict dist/SpeakDrop.app
 
       - name: Normalize tag name for file path
         run: echo "TAG_SAFE=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_ENV"
@@ -114,8 +116,9 @@ jobs:
             ## インストール方法
 
             1. `SpeakDrop-${{ env.TAG_SAFE }}.zip` と `SpeakDrop-${{ env.TAG_SAFE }}.zip.sha256` をダウンロード
-            2. **ターミナルで整合性を確認**:
+            2. **ターミナルでダウンロードフォルダに移動して整合性を確認**:
                ```bash
+               cd ~/Downloads
                shasum -a 256 -c SpeakDrop-${{ env.TAG_SAFE }}.zip.sha256
                ```
             3. ZIP を解凍して `SpeakDrop.app` を `/Applications` フォルダに移動
