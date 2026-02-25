@@ -571,4 +571,7 @@ class TestOpenSettings:
         mock_start.assert_called_once()
         mock_tp_cls.assert_called_once_with(model="gemma3:4b")
         assert app.text_processor is mock_tp_cls.return_value
+        assert app.config.model == "large-v3"
         assert app.config.hotkey == "alt_l"
+        assert app.config.ollama_model == "gemma3:4b"
+        assert app.config.save.call_count == 3

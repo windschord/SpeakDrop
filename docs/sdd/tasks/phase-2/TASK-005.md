@@ -54,7 +54,7 @@ TDD原則に従い、`ollama` クライアントはpytest-mockでモックしま
 - [ ] `tests/test_text_processor.py` が作成されている（テストが5件以上）
 - [ ] `speakdrop/text_processor.py` が実装されている
 - [ ] `TextProcessor.OLLAMA_HOST == "http://localhost:11434"`（NFR-005）
-- [ ] `TextProcessor.MODEL == "qwen2.5:7b"`
+- [ ] `TextProcessor.DEFAULT_MODEL == "qwen2.5:7b"`（インスタンスは `self._model` で参照）
 - [ ] 正常ケース: Ollamaが返したテキストを返す（REQ-007, REQ-008）
 - [ ] フォールバック: Ollama未起動時は元テキストを返す（REQ-009）
 - [ ] タイムアウト: 5秒（NFR-002対応）
@@ -88,8 +88,8 @@ class TestTextProcessorConstants:
         assert TextProcessor.OLLAMA_HOST == "http://localhost:11434"
 
     def test_model(self) -> None:
-        """MODEL が 'qwen2.5:7b' であること。"""
-        assert TextProcessor.MODEL == "qwen2.5:7b"
+        """DEFAULT_MODEL が 'qwen2.5:7b' であること。"""
+        assert TextProcessor.DEFAULT_MODEL == "qwen2.5:7b"
 
 
 class TestTextProcessorProcess:
