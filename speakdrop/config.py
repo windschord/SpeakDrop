@@ -17,6 +17,7 @@ class Config:
     hotkey: str = "alt_r"
     model: str = "kotoba-tech/kotoba-whisper-v1.0"
     enabled: bool = True
+    ollama_model: str = "qwen2.5:7b"
 
     def load(self, config_path: Path = CONFIG_PATH) -> "Config":
         """設定ファイルが存在すれば読み込む（REQ-017）。

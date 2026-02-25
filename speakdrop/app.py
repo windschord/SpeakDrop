@@ -43,7 +43,7 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         # コンポーネント初期化
         self.audio_recorder = AudioRecorder()
         self.transcriber = Transcriber(model_id=self.config.model)
-        self.text_processor = TextProcessor()
+        self.text_processor = TextProcessor(model=self.config.ollama_model)
         self.clipboard_inserter = ClipboardInserter()
         self.permission_checker = PermissionChecker()
 
@@ -201,24 +201,31 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             self.toggle_item.title = "音声入力 OFF"
 
     def open_settings(self, _: rumps.MenuItem) -> None:
-        """設定ダイアログを表示する（REQ-013）。"""
-        model_options = [
+        """設定ダイアログを表示する（REQ-013）。
+
+        3つのダイアログをシーケンシャルに表示する:
+        1. Whisper モデル選択
+        2. ホットキー設定
+        3. Ollama モデル設定
+        """
+        # --- ステップ 1/3: Whisper モデル ---
+        whisper_options = [
             "kotoba-tech/kotoba-whisper-v1.0",
             "large-v3",
             "medium",
             "small",
         ]
 
-        response = rumps.Window(
-            message="モデルを選択してください:",
-            title="SpeakDrop 設定",
+        whisper_response = rumps.Window(
+            message="Whisper モデルを選択してください:",
+            title="SpeakDrop 設定 (1/3)",
             default_text=self.config.model,
             ok="OK",
             cancel="キャンセル",
         ).run()
 
-        if response.clicked and response.text in model_options:
-            new_model = response.text
+        if whisper_response.clicked and whisper_response.text in whisper_options:
+            new_model = whisper_response.text
             if new_model != self.config.model:
                 self.config.model = new_model
                 self.config.save()
@@ -228,6 +235,46 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
                     message=f"{new_model} を読み込みます（初回使用時にダウンロード）",
                 )
                 self.transcriber.reload_model(new_model)
+
+        # --- ステップ 2/3: ホットキー設定 ---
+        hotkey_response = rumps.Window(
+            message=(
+                "ホットキーを入力してください:\n"
+                "例: alt_r=右Option, alt_l=左Option, ctrl_r=右Control, ctrl_l=左Control"
+            ),
+            title="SpeakDrop 設定 (2/3)",
+            default_text=self.config.hotkey,
+            ok="OK",
+            cancel="キャンセル",
+        ).run()
+
+        if hotkey_response.clicked and hotkey_response.text:
+            new_hotkey = hotkey_response.text.strip()
+            if new_hotkey and new_hotkey != self.config.hotkey:
+                self.config.hotkey = new_hotkey
+                self.config.save()
+                if hasattr(self, "hotkey_listener"):
+                    self.hotkey_listener.stop()
+                self._start_hotkey_listener()
+
+        # --- ステップ 3/3: Ollama モデル設定 ---
+        ollama_response = rumps.Window(
+            message=(
+                "Ollama モデルを入力してください:\n"
+                "例: qwen2.5:7b, qwen2.5:3b, gemma3:4b, llama3.2:3b"
+            ),
+            title="SpeakDrop 設定 (3/3)",
+            default_text=self.config.ollama_model,
+            ok="OK",
+            cancel="キャンセル",
+        ).run()
+
+        if ollama_response.clicked and ollama_response.text:
+            new_ollama_model = ollama_response.text.strip()
+            if new_ollama_model and new_ollama_model != self.config.ollama_model:
+                self.config.ollama_model = new_ollama_model
+                self.config.save()
+                self.text_processor = TextProcessor(model=new_ollama_model)
 
     def _quit(self, _: rumps.MenuItem) -> None:
         """アプリケーションを終了する。"""
