@@ -29,6 +29,18 @@ ollama pull qwen2.5:7b
 
 ## インストール
 
+### ビルド済みアプリ（推奨）
+
+[Releases](https://github.com/windschord/SpeakDrop/releases) から最新の `SpeakDrop-vX.Y.Z.zip` をダウンロードして解凍し、`SpeakDrop.app` を `/Applications` フォルダに移動後、以下を実行します。
+
+```bash
+xattr -dr com.apple.quarantine /Applications/SpeakDrop.app
+```
+
+> このアプリは Apple 公証を受けていないため、上記コマンドで Gatekeeper の検疫属性を除去する必要があります。実行しないと「壊れているため開けません」というエラーが表示されます。
+
+### ソースからビルド
+
 ```bash
 git clone https://github.com/windschord/SpeakDrop.git
 cd SpeakDrop

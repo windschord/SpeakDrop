@@ -87,6 +87,11 @@ jobs:
           /usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" "$PLIST" 2>/dev/null || \
           /usr/libexec/PlistBuddy -c "Set :LSUIElement true" "$PLIST"
 
+      - name: Ad-hoc sign app bundle
+        run: |
+          # バンドル全体をアドホック署名（Gatekeeper の「壊れている」エラーを回避）
+          codesign --force --deep --sign - dist/SpeakDrop.app
+
       - name: Normalize tag name for file path
         run: echo "TAG_SAFE=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_ENV"
 
@@ -107,7 +112,14 @@ jobs:
 
             1. `SpeakDrop-${{ env.TAG_SAFE }}.zip` をダウンロードして解凍
             2. `SpeakDrop.app` を `/Applications` フォルダに移動
-            3. 初回起動時は右クリック → **開く**（Gatekeeperの警告を回避）
+            3. **ターミナルで以下を実行**して Gatekeeper の検疫属性を除去:
+               ```bash
+               xattr -dr com.apple.quarantine /Applications/SpeakDrop.app
+               ```
+            4. `SpeakDrop.app` をダブルクリックで起動
+
+            > **注意**: このアプリは Apple 公証を受けていないため、上記の手順が必要です。
+            > または右クリック → **開く** → **開く** でも起動できる場合があります。
 
             ## 必要な権限
 
