@@ -33,6 +33,8 @@ class Config:
                 data: dict[str, object] = json.loads(config_path.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
                 return self
+            if not isinstance(data, dict):
+                return self
             expected_types = {f.name: f.type for f in fields(self)}
             for key, value in data.items():
                 expected = expected_types.get(key)
