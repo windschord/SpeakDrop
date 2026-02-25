@@ -200,7 +200,10 @@ class TextProcessor:
     """Ollama LLM によるテキスト後処理クラス（NFR-005: ローカル処理）。"""
 
     OLLAMA_HOST: str = "http://localhost:11434"  # NFR-005: ローカル固定
-    MODEL: str = "qwen2.5:7b"
+    DEFAULT_MODEL: str = "qwen2.5:7b"
+
+    def __init__(self, model: str = DEFAULT_MODEL) -> None:
+        self._model = model
 
     def process(self, text: str) -> str:
         """テキストを後処理して返す。
@@ -215,7 +218,7 @@ class TextProcessor:
         """
         try:
             response = ollama.chat(
-                model=self.MODEL,
+                model=self._model,
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": text},
