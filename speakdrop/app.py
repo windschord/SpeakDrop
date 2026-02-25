@@ -152,7 +152,8 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
                 self.set_state(AppState.IDLE)
                 return
 
-            processed = self.text_processor.process(text)
+            processor = self.text_processor  # ローカル参照でスレッド安全性を確保
+            processed = processor.process(text)
             AppHelper.callAfter(self._finish_processing, processed)
         except Exception as e:
             AppHelper.callAfter(

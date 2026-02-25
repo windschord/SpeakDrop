@@ -50,7 +50,8 @@ class TextProcessor:
                 ],
                 options={"num_predict": 512},
             )
-            return str(response.message.content)
+            content = response.message.content
+            return str(content) if content else text
         except Exception:
             # REQ-009: Ollama 未起動・エラー時はフォールバック
             return text

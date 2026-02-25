@@ -35,6 +35,7 @@ class Config:
                 return self
             if not isinstance(data, dict):
                 return self
+            # str と bool のみ対応（他の型を追加した場合はここも更新が必要）
             expected_types = {f.name: f.type for f in fields(self)}
             for key, value in data.items():
                 expected = expected_types.get(key)
