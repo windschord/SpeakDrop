@@ -448,6 +448,7 @@ class TestOpenSettings:
         mock_listener.stop.assert_called_once()
         mock_start.assert_called_once()
         assert app.config.hotkey == "alt_l"
+        app.config.save.assert_called_once()
 
     def test_ollama_model_change_recreates_text_processor(self, app: Any) -> None:
         """Ollama モデル変更時に TextProcessor が再生成されること。"""
@@ -501,6 +502,7 @@ class TestOpenSettings:
 
         assert app.config.model == original_model
         app.transcriber.reload_model.assert_not_called()
+        app.config.save.assert_not_called()
 
     def test_hotkey_change_does_not_start_listener_when_disabled(self, app: Any) -> None:
         """音声入力が無効な場合はホットキー変更後にリスナーを起動しないこと。"""
@@ -522,3 +524,4 @@ class TestOpenSettings:
         mock_listener.stop.assert_called_once()
         mock_start.assert_not_called()
         assert app.config.hotkey == "alt_l"
+        app.config.save.assert_called_once()
