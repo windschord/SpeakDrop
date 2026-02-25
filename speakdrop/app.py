@@ -312,6 +312,8 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
 
     def _settings_ollama(self) -> bool:
         """Ollama モデル設定ダイアログを表示する。キャンセル時は False を返す。"""
+        import re  # noqa: PLC0415
+
         return self._show_setting_dialog(
             message=(
                 "Ollama モデルを入力してください:\n"
@@ -319,11 +321,12 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             ),
             title="SpeakDrop 設定 (3/3)",
             default_text=self.config.ollama_model,
+            validator=lambda v: bool(re.match(r"^[\w./-]+:[\w./-]+$", v)),
             on_save=self._apply_ollama_model,
             on_invalid=lambda: rumps.notification(
                 title="SpeakDrop",
                 subtitle="無効なOllamaモデルです",
-                message="モデル名を入力してください",
+                message="モデル名は 'name:tag' 形式で入力してください",
             ),
         )
 

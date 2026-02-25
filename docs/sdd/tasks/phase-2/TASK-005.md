@@ -294,7 +294,7 @@ SYSTEM_PROMPT = """あなたは日本語テキストの校正を行うアシス�
 ## 注意事項
 
 - `import ollama` をモジュールレベルでインポートすること（テストでモック可能にするため）
-- テストでは `@patch("speakdrop.text_processor.ollama")` でモックすること
+- テストでは `@patch("speakdrop.text_processor.ollama.Client")` でモックすること
 - OLLAMA_HOST は固定値であり、設定変更不可（NFR-005: ローカル処理の徹底）
 - 例外処理は広く（`except Exception`）キャッチして確実にフォールバックすること
 - タイムアウト設定は ollama ライブラリのバージョンを確認して適切に実装すること
