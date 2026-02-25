@@ -84,6 +84,16 @@ class TestConfigLoad:
         assert config.hotkey == "ctrl_r"
         assert config.model == "kotoba-tech/kotoba-whisper-v1.0"  # デフォルト維持
 
+    def test_load_invalid_type_uses_default(self, tmp_path: Path) -> None:
+        """不正な型の設定値は無視してデフォルト値を維持すること。"""
+        config_file = tmp_path / "config.json"
+        config_file.write_text(json.dumps({"ollama_model": 123}))
+
+        config = Config()
+        config.load(config_path=config_file)
+
+        assert config.ollama_model == "qwen2.5:7b"  # デフォルト維持
+
 
 class TestConfigSave:
     """Config.save() のテスト。"""

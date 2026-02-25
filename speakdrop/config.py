@@ -3,7 +3,7 @@
 設定を ~/.config/speakdrop/config.json に保存・読み込みする。
 """
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, fields
 import json
 from pathlib import Path
 
@@ -33,8 +33,12 @@ class Config:
                 data: dict[str, object] = json.loads(config_path.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
                 return self
+            expected_types = {f.name: f.type for f in fields(self)}
             for key, value in data.items():
-                if hasattr(self, key):
+                expected = expected_types.get(key)
+                if expected is str and isinstance(value, str):
+                    setattr(self, key, value)
+                elif expected is bool and isinstance(value, bool):
                     setattr(self, key, value)
         return self
 
