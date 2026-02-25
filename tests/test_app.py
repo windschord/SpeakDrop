@@ -471,6 +471,25 @@ class TestOpenSettings:
         app.config.save.assert_called_once()
         assert app.text_processor is mock_tp_cls.return_value
 
+    def test_ollama_model_without_tag_is_accepted(self, app: Any) -> None:
+        """タグ省略の Ollama モデル名（例: llama3.2）も受け入れられること。"""
+        with (
+            patch("speakdrop.app.rumps.Window") as mock_window_cls,
+            patch("speakdrop.app.TextProcessor") as mock_tp_cls,
+        ):
+            mock_tp_cls.return_value = MagicMock()
+            mock_window_cls.side_effect = _window_sequence(
+                (1, app.config.model),  # Whisper OK（変更なし）
+                (1, app.config.hotkey),  # ホットキー OK（変更なし）
+                (1, "llama3.2"),  # Ollama: タグなし
+            )
+            app.open_settings(MagicMock())
+
+        mock_tp_cls.assert_called_once_with(model="llama3.2")
+        assert app.config.ollama_model == "llama3.2"
+        app.config.save.assert_called_once()
+        assert app.text_processor is mock_tp_cls.return_value
+
     def test_all_cancel_changes_nothing(self, app: Any) -> None:
         """最初のダイアログでキャンセルした場合に設定が変更されないこと。"""
         original_hotkey = app.config.hotkey

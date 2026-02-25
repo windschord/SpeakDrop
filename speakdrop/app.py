@@ -326,7 +326,7 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             on_invalid=lambda: rumps.notification(
                 title="SpeakDrop",
                 subtitle="無効なOllamaモデルです",
-                message="モデル名は 'name:tag' 形式で入力してください",
+                message="モデル名は 'name[:tag]' 形式で入力してください",
             ),
         )
 
