@@ -5,6 +5,7 @@ rumps.App を継承した SpeakDropApp クラスで全モジュールを統合�
 
 from __future__ import annotations
 
+import re
 import threading
 from collections.abc import Callable
 from enum import Enum, auto
@@ -312,8 +313,6 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
 
     def _settings_ollama(self) -> bool:
         """Ollama モデル設定ダイアログを表示する。キャンセル時は False を返す。"""
-        import re  # noqa: PLC0415
-
         return self._show_setting_dialog(
             message=(
                 "Ollama モデルを入力してください:\n"
