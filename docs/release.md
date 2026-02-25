@@ -108,7 +108,9 @@ git push origin v1.0.0-pre.1
 ### PyInstaller デフォルトアイコンの欠如
 
 PyInstaller 6.11.0 を uv でインストールした環境では、デフォルトアイコン（`icon-windowed.icns`）が欠如する場合があります。
-ワークフローでは `--icon NONE` を指定して回避しています。
+`--icon NONE` は PyInstaller 6.11.0 では機能しません（`NONE` をキーワードではなくパスとして解釈するため）。
+
+ワークフローでは "Create app icon" ステップで Python + `iconutil` を使って最小限の透明アイコンを生成し、`--icon /tmp/SpeakDrop.icns` で渡して回避しています。
 
 アプリにカスタムアイコンを設定する場合は、`.icns` ファイルを作成し `--icon assets/icon.icns` のように指定します。
 
@@ -128,10 +130,37 @@ CI と同等の環境でローカルビルドをテストする手順:
 uv sync
 uv pip install "pyinstaller==6.11.0"
 
+# アイコン生成（PyInstaller 6.11.0 のデフォルトアイコン欠如を回避）
+python3 - <<'PYEOF'
+import struct, zlib, os
+
+def make_png(w, h):
+    def c(t, d):
+        x = struct.pack('>I', len(d)) + t + d
+        return x + struct.pack('>I', zlib.crc32(x[4:]))
+    row = b'\x00' + b'\x00\x00\x00\x00' * w
+    return (b'\x89PNG\r\n\x1a\n'
+            + c(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 6, 0, 0, 0))
+            + c(b'IDAT', zlib.compress(row * h))
+            + c(b'IEND', b''))
+
+os.makedirs('/tmp/icon.iconset', exist_ok=True)
+for name, size in [
+    ('icon_16x16', 16), ('icon_16x16@2x', 32),
+    ('icon_32x32', 32), ('icon_32x32@2x', 64),
+    ('icon_128x128', 128), ('icon_128x128@2x', 256),
+    ('icon_256x256', 256), ('icon_256x256@2x', 512),
+    ('icon_512x512', 512), ('icon_512x512@2x', 1024),
+]:
+    with open(f'/tmp/icon.iconset/{name}.png', 'wb') as f:
+        f.write(make_png(size, size))
+PYEOF
+iconutil -c icns /tmp/icon.iconset -o /tmp/SpeakDrop.icns
+
 # ビルド
 MACOSX_DEPLOYMENT_TARGET=13.0 uv run pyinstaller \
   --windowed \
-  --icon NONE \
+  --icon /tmp/SpeakDrop.icns \
   --name "SpeakDrop" \
   --osx-bundle-identifier "com.speakdrop.app" \
   --collect-all "rumps" \
