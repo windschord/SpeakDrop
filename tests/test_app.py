@@ -418,11 +418,10 @@ class TestOpenSettings:
 
     def test_whisper_model_change_saves_and_reloads(self, app: Any) -> None:
         """Whisper モデル変更時に設定が保存されトランスクライバーがリロードされること。"""
-        # 1/3: Whisper モデル変更（large-v3）、2/3: ホットキーキャンセル、3/3: Ollama キャンセル
+        # 1/3: Whisper モデル変更（large-v3）、2/3: ホットキーキャンセル → 終了
         with patch("speakdrop.app.rumps.Window") as mock_window_cls:
             mock_window_cls.side_effect = [
                 _make_window_mock(_make_window_response(1, "large-v3")),
-                _make_window_mock(_make_window_response(0, "")),
                 _make_window_mock(_make_window_response(0, "")),
             ]
             app.open_settings(MagicMock())
@@ -437,9 +436,11 @@ class TestOpenSettings:
 
         with patch("speakdrop.app.rumps.Window") as mock_window_cls:
             mock_window_cls.side_effect = [
-                _make_window_mock(_make_window_response(0, "")),  # Whisper キャンセル
+                _make_window_mock(
+                    _make_window_response(1, app.config.model)
+                ),  # Whisper OK（変更なし）
                 _make_window_mock(_make_window_response(1, "alt_l")),  # ホットキー OK
-                _make_window_mock(_make_window_response(0, "")),  # Ollama キャンセル
+                _make_window_mock(_make_window_response(0, "")),  # Ollama キャンセル → 終了
             ]
             with patch.object(app, "_start_hotkey_listener") as mock_start:
                 app.open_settings(MagicMock())
@@ -452,8 +453,12 @@ class TestOpenSettings:
         """Ollama モデル変更時に TextProcessor が再生成されること。"""
         with patch("speakdrop.app.rumps.Window") as mock_window_cls:
             mock_window_cls.side_effect = [
-                _make_window_mock(_make_window_response(0, "")),  # Whisper キャンセル
-                _make_window_mock(_make_window_response(0, "")),  # ホットキー キャンセル
+                _make_window_mock(
+                    _make_window_response(1, app.config.model)
+                ),  # Whisper OK（変更なし）
+                _make_window_mock(
+                    _make_window_response(1, app.config.hotkey)
+                ),  # ホットキー OK（変更なし）
                 _make_window_mock(_make_window_response(1, "gemma3:4b")),  # Ollama OK
             ]
             with patch("speakdrop.app.TextProcessor") as mock_tp_cls:
@@ -465,16 +470,14 @@ class TestOpenSettings:
         app.config.save.assert_called()
 
     def test_all_cancel_changes_nothing(self, app: Any) -> None:
-        """全ダイアログでキャンセルした場合に設定が変更されないこと。"""
+        """最初のダイアログでキャンセルした場合に設定が変更されないこと。"""
         original_hotkey = app.config.hotkey
         original_model = app.config.model
         original_ollama_model = app.config.ollama_model
 
         with patch("speakdrop.app.rumps.Window") as mock_window_cls:
             mock_window_cls.side_effect = [
-                _make_window_mock(_make_window_response(0, "")),  # Whisper キャンセル
-                _make_window_mock(_make_window_response(0, "")),  # ホットキー キャンセル
-                _make_window_mock(_make_window_response(0, "")),  # Ollama キャンセル
+                _make_window_mock(_make_window_response(0, "")),  # Whisper キャンセル → 終了
             ]
             app.open_settings(MagicMock())
 
@@ -490,9 +493,8 @@ class TestOpenSettings:
 
         with patch("speakdrop.app.rumps.Window") as mock_window_cls:
             mock_window_cls.side_effect = [
-                _make_window_mock(_make_window_response(1, "invalid-model")),  # 不正値
-                _make_window_mock(_make_window_response(0, "")),  # ホットキー キャンセル
-                _make_window_mock(_make_window_response(0, "")),  # Ollama キャンセル
+                _make_window_mock(_make_window_response(1, "invalid-model")),  # 不正値: OK → 無視
+                _make_window_mock(_make_window_response(0, "")),  # ホットキー キャンセル → 終了
             ]
             app.open_settings(MagicMock())
 
@@ -507,9 +509,11 @@ class TestOpenSettings:
 
         with patch("speakdrop.app.rumps.Window") as mock_window_cls:
             mock_window_cls.side_effect = [
-                _make_window_mock(_make_window_response(0, "")),  # Whisper キャンセル
+                _make_window_mock(
+                    _make_window_response(1, app.config.model)
+                ),  # Whisper OK（変更なし）
                 _make_window_mock(_make_window_response(1, "alt_l")),  # ホットキー OK
-                _make_window_mock(_make_window_response(0, "")),  # Ollama キャンセル
+                _make_window_mock(_make_window_response(0, "")),  # Ollama キャンセル → 終了
             ]
             with patch.object(app, "_start_hotkey_listener") as mock_start:
                 app.open_settings(MagicMock())

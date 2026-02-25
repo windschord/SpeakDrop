@@ -200,23 +200,15 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
                 self.hotkey_listener.stop()
             self.toggle_item.title = "音声入力 OFF"
 
-    def open_settings(self, _: rumps.MenuItem) -> None:
-        """設定ダイアログを表示する（REQ-013）。
-
-        3つのダイアログをシーケンシャルに表示する:
-        1. Whisper モデル選択
-        2. ホットキー設定
-        3. Ollama モデル設定
-        """
-        # --- ステップ 1/3: Whisper モデル ---
+    def _settings_whisper(self) -> bool:
+        """Whisper モデル設定ダイアログを表示する。キャンセル時は False を返す。"""
         whisper_options = [
             "kotoba-tech/kotoba-whisper-v1.0",
             "large-v3",
             "medium",
             "small",
         ]
-
-        whisper_response = rumps.Window(
+        response = rumps.Window(
             message=(
                 "Whisper モデルを選択してください:\n" + "\n".join(f"  {o}" for o in whisper_options)
             ),
@@ -225,9 +217,10 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             ok="OK",
             cancel="キャンセル",
         ).run()
-
-        if whisper_response.clicked and whisper_response.text:
-            new_model = whisper_response.text.strip()
+        if not response.clicked:
+            return False
+        if response.text:
+            new_model = response.text.strip()
             if new_model in whisper_options and new_model != self.config.model:
                 self.config.model = new_model
                 self.config.save()
@@ -237,9 +230,11 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
                     message=f"{new_model} を読み込みます（初回使用時にダウンロード）",
                 )
                 self.transcriber.reload_model(new_model)
+        return True
 
-        # --- ステップ 2/3: ホットキー設定 ---
-        hotkey_response = rumps.Window(
+    def _settings_hotkey(self) -> bool:
+        """ホットキー設定ダイアログを表示する。キャンセル時は False を返す。"""
+        response = rumps.Window(
             message=(
                 "ホットキーを入力してください:\n"
                 "例: alt_r=右Option, alt_l=左Option, ctrl_r=右Control, ctrl_l=左Control"
@@ -249,9 +244,10 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             ok="OK",
             cancel="キャンセル",
         ).run()
-
-        if hotkey_response.clicked and hotkey_response.text:
-            new_hotkey = hotkey_response.text.strip()
+        if not response.clicked:
+            return False
+        if response.text:
+            new_hotkey = response.text.strip()
             if new_hotkey and new_hotkey != self.config.hotkey:
                 self.config.hotkey = new_hotkey
                 self.config.save()
@@ -259,9 +255,11 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
                     self.hotkey_listener.stop()
                 if self.config.enabled:
                     self._start_hotkey_listener()
+        return True
 
-        # --- ステップ 3/3: Ollama モデル設定 ---
-        ollama_response = rumps.Window(
+    def _settings_ollama(self) -> None:
+        """Ollama モデル設定ダイアログを表示する。"""
+        response = rumps.Window(
             message=(
                 "Ollama モデルを入力してください:\n"
                 "例: qwen2.5:7b, qwen2.5:3b, gemma3:4b, llama3.2:3b"
@@ -271,13 +269,28 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             ok="OK",
             cancel="キャンセル",
         ).run()
-
-        if ollama_response.clicked and ollama_response.text:
-            new_ollama_model = ollama_response.text.strip()
+        if not response.clicked:
+            return
+        if response.text:
+            new_ollama_model = response.text.strip()
             if new_ollama_model and new_ollama_model != self.config.ollama_model:
                 self.config.ollama_model = new_ollama_model
                 self.config.save()
                 self.text_processor = TextProcessor(model=new_ollama_model)
+
+    def open_settings(self, _: rumps.MenuItem) -> None:
+        """設定ダイアログを表示する（REQ-013）。
+
+        3つのダイアログをシーケンシャルに表示する:
+        1. Whisper モデル選択
+        2. ホットキー設定
+        3. Ollama モデル設定
+        """
+        if not self._settings_whisper():
+            return
+        if not self._settings_hotkey():
+            return
+        self._settings_ollama()
 
     def _quit(self, _: rumps.MenuItem) -> None:
         """アプリケーションを終了する。"""
