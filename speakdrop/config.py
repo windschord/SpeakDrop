@@ -30,7 +30,7 @@ class Config:
         """
         if config_path.exists():
             try:
-                data: dict[str, object] = json.loads(config_path.read_text(encoding="utf-8"))
+                data: object = json.loads(config_path.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
                 return self
             if not isinstance(data, dict):

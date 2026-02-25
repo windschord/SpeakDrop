@@ -6,6 +6,7 @@ rumps.App を継承した SpeakDropApp クラスで全モジュールを統合�
 from __future__ import annotations
 
 import threading
+from collections.abc import Callable
 from enum import Enum, auto
 
 import numpy as np
@@ -200,6 +201,40 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
                 self.hotkey_listener.stop()
             self.toggle_item.title = "音声入力 OFF"
 
+    def _show_setting_dialog(
+        self,
+        *,
+        message: str,
+        title: str,
+        default_text: str,
+        validator: Callable[[str], bool] | None = None,
+        on_save: Callable[[str], None],
+        on_invalid: Callable[[], None] | None = None,
+    ) -> bool:
+        """共通設定ダイアログ表示ヘルパー。
+
+        Returns:
+            True: OK を押した場合
+            False: キャンセルした場合
+        """
+        response = rumps.Window(
+            message=message,
+            title=title,
+            default_text=default_text,
+            ok="OK",
+            cancel="キャンセル",
+        ).run()
+        if not response.clicked:
+            return False
+        if response.text:
+            new_value = response.text.strip()
+            if new_value:
+                if validator is None or validator(new_value):
+                    on_save(new_value)
+                elif on_invalid is not None:
+                    on_invalid()
+        return True
+
     def _settings_whisper(self) -> bool:
         """Whisper モデル設定ダイアログを表示する。キャンセル時は False を返す。"""
         whisper_options = [
@@ -208,36 +243,33 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             "medium",
             "small",
         ]
-        response = rumps.Window(
+        return self._show_setting_dialog(
             message=(
-                "Whisper モデルを選択してください:\n" + "\n".join(f"  {o}" for o in whisper_options)
+                "Whisper モデルを選択してください:\n"
+                + "\n".join(f"  {o}" for o in whisper_options)
             ),
             title="SpeakDrop 設定 (1/3)",
             default_text=self.config.model,
-            ok="OK",
-            cancel="キャンセル",
-        ).run()
-        if not response.clicked:
-            return False
-        if response.text:
-            new_model = response.text.strip()
-            if new_model in whisper_options:
-                if new_model != self.config.model:
-                    self.config.model = new_model
-                    self.config.save()
-                    rumps.notification(
-                        title="SpeakDrop",
-                        subtitle="モデルを変更しています",
-                        message=f"{new_model} を読み込みます（初回使用時にダウンロード）",
-                    )
-                    self.transcriber.reload_model(new_model)
-            else:
-                rumps.notification(
-                    title="SpeakDrop",
-                    subtitle="無効なWhisperモデルです",
-                    message="候補一覧から選択してください",
-                )
-        return True
+            validator=lambda v: v in whisper_options,
+            on_save=self._apply_whisper_model,
+            on_invalid=lambda: rumps.notification(
+                title="SpeakDrop",
+                subtitle="無効なWhisperモデルです",
+                message="候補一覧から選択してください",
+            ),
+        )
+
+    def _apply_whisper_model(self, model: str) -> None:
+        """Whisper モデルを適用する。"""
+        if model != self.config.model:
+            self.config.model = model
+            self.config.save()
+            rumps.notification(
+                title="SpeakDrop",
+                subtitle="モデルを変更しています",
+                message=f"{model} を読み込みます（初回使用時にダウンロード）",
+            )
+            self.transcriber.reload_model(model)
 
     def _is_valid_hotkey(self, key: str) -> bool:
         """ホットキー文字列が pynput.keyboard.Key に存在するか確認する。"""
@@ -250,62 +282,56 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
 
     def _settings_hotkey(self) -> bool:
         """ホットキー設定ダイアログを表示する。キャンセル時は False を返す。"""
-        response = rumps.Window(
+        current_hotkey = self.config.hotkey
+        return self._show_setting_dialog(
             message=(
                 "ホットキーを入力してください:\n"
                 "例: alt_r=右Option, alt_l=左Option, ctrl_r=右Control, ctrl_l=左Control"
             ),
             title="SpeakDrop 設定 (2/3)",
-            default_text=self.config.hotkey,
-            ok="OK",
-            cancel="キャンセル",
-        ).run()
-        if not response.clicked:
-            return False
-        if response.text:
-            new_hotkey = response.text.strip()
-            if new_hotkey and new_hotkey != self.config.hotkey:
-                if not self._is_valid_hotkey(new_hotkey):
-                    rumps.notification(
-                        title="SpeakDrop",
-                        subtitle="無効なホットキーです",
-                        message="有効なキー名を入力してください（例: alt_r, ctrl_l）",
-                    )
-                else:
-                    self.config.hotkey = new_hotkey
-                    self.config.save()
-                    if hasattr(self, "hotkey_listener"):
-                        self.hotkey_listener.stop()
-                    if self.config.enabled:
-                        self._start_hotkey_listener()
-        return True
+            default_text=current_hotkey,
+            validator=lambda v: v == current_hotkey or self._is_valid_hotkey(v),
+            on_save=self._apply_hotkey,
+            on_invalid=lambda: rumps.notification(
+                title="SpeakDrop",
+                subtitle="無効なホットキーです",
+                message="有効なキー名を入力してください（例: alt_r, ctrl_l）",
+            ),
+        )
+
+    def _apply_hotkey(self, hotkey: str) -> None:
+        """ホットキーを適用する。"""
+        if hotkey != self.config.hotkey:
+            self.config.hotkey = hotkey
+            self.config.save()
+            if hasattr(self, "hotkey_listener"):
+                self.hotkey_listener.stop()
+            if self.config.enabled:
+                self._start_hotkey_listener()
 
     def _settings_ollama(self) -> bool:
         """Ollama モデル設定ダイアログを表示する。キャンセル時は False を返す。"""
-        response = rumps.Window(
+        return self._show_setting_dialog(
             message=(
                 "Ollama モデルを入力してください:\n"
                 "例: qwen2.5:7b, qwen2.5:3b, gemma3:4b, llama3.2:3b"
             ),
             title="SpeakDrop 設定 (3/3)",
             default_text=self.config.ollama_model,
-            ok="OK",
-            cancel="キャンセル",
-        ).run()
-        if not response.clicked:
-            return False
-        if response.text:
-            new_ollama_model = response.text.strip()
-            if new_ollama_model and new_ollama_model != self.config.ollama_model:
-                self.config.ollama_model = new_ollama_model
-                self.config.save()
-                self.text_processor = TextProcessor(model=new_ollama_model)
-                rumps.notification(
-                    title="SpeakDrop",
-                    subtitle="Ollama モデルを変更しました",
-                    message=f"{new_ollama_model} を使用します",
-                )
-        return True
+            on_save=self._apply_ollama_model,
+        )
+
+    def _apply_ollama_model(self, model: str) -> None:
+        """Ollama モデルを適用する。"""
+        if model != self.config.ollama_model:
+            self.config.ollama_model = model
+            self.config.save()
+            self.text_processor = TextProcessor(model=model)
+            rumps.notification(
+                title="SpeakDrop",
+                subtitle="Ollama モデルを変更しました",
+                message=f"{model} を使用します",
+            )
 
     def open_settings(self, _: rumps.MenuItem) -> None:
         """設定ダイアログを表示する（REQ-013）。
