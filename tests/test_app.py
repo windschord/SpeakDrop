@@ -129,6 +129,7 @@ def app() -> Any:
         mock_cfg_instance.enabled = True
         mock_cfg_instance.hotkey = "alt_r"
         mock_cfg_instance.model = "kotoba-tech/kotoba-whisper-v1.0"
+        mock_cfg_instance.ollama_model = "qwen2.5:7b"
         mock_cfg.return_value.load.return_value = mock_cfg_instance
 
         mock_pc.return_value.check_microphone.return_value = True
@@ -390,3 +391,117 @@ class TestProcessAudio:
         app.text_processor.process.assert_not_called()
         app.clipboard_inserter.insert.assert_not_called()
         assert app.state == AppState.IDLE
+
+
+class TestOpenSettings:
+    """open_settings() ダイアログのテスト。"""
+
+    def _make_response(self, clicked: int, text: str) -> MagicMock:
+        """Window.run() の戻り値を生成するヘルパー。"""
+        r = MagicMock()
+        r.clicked = clicked
+        r.text = text
+        return r
+
+    def test_whisper_model_change_saves_and_reloads(self, app: Any) -> None:
+        """Whisper モデル変更時に設定が保存されトランスクライバーがリロードされること。"""
+        # 1/3: Whisper モデル変更、2/3: ホットキーキャンセル、3/3: Ollama モデルキャンセル
+        responses = [
+            self._make_response(1, "large-v3"),   # Whisper モデル OK
+            self._make_response(0, ""),            # ホットキー キャンセル
+        ]
+        _fake_rumps.Window.side_effect = [
+            MagicMock(run=MagicMock(return_value=responses[0])),
+            MagicMock(run=MagicMock(return_value=responses[1])),
+        ]
+
+        app.open_settings(MagicMock())
+
+        app.config.save.assert_called()
+        app.transcriber.reload_model.assert_called_once_with("large-v3")
+
+    def test_hotkey_change_restarts_listener(self, app: Any) -> None:
+        """ホットキー変更時にリスナーが再起動されること。"""
+        responses = [
+            self._make_response(0, ""),        # Whisper モデル キャンセル
+            self._make_response(1, "alt_l"),   # ホットキー OK
+            self._make_response(0, ""),        # Ollama モデル キャンセル
+        ]
+        _fake_rumps.Window.side_effect = [
+            MagicMock(run=MagicMock(return_value=responses[0])),
+            MagicMock(run=MagicMock(return_value=responses[1])),
+            MagicMock(run=MagicMock(return_value=responses[2])),
+        ]
+
+        mock_listener = MagicMock()
+        app.hotkey_listener = mock_listener
+
+        with patch.object(app, "_start_hotkey_listener") as mock_start:
+            app.open_settings(MagicMock())
+
+        mock_listener.stop.assert_called_once()
+        mock_start.assert_called_once()
+        assert app.config.hotkey == "alt_l"
+
+    def test_ollama_model_change_recreates_text_processor(self, app: Any) -> None:
+        """Ollama モデル変更時に TextProcessor が再生成されること。"""
+        responses = [
+            self._make_response(0, ""),             # Whisper モデル キャンセル
+            self._make_response(0, ""),             # ホットキー キャンセル
+            self._make_response(1, "gemma3:4b"),    # Ollama モデル OK
+        ]
+        _fake_rumps.Window.side_effect = [
+            MagicMock(run=MagicMock(return_value=responses[0])),
+            MagicMock(run=MagicMock(return_value=responses[1])),
+            MagicMock(run=MagicMock(return_value=responses[2])),
+        ]
+
+        with patch("speakdrop.app.TextProcessor") as mock_tp_cls:
+            mock_tp_cls.return_value = MagicMock()
+            app.open_settings(MagicMock())
+
+        mock_tp_cls.assert_called_once_with(model="gemma3:4b")
+        assert app.config.ollama_model == "gemma3:4b"
+        app.config.save.assert_called()
+
+    def test_all_cancel_changes_nothing(self, app: Any) -> None:
+        """全ダイアログでキャンセルした場合に設定が変更されないこと。"""
+        responses = [
+            self._make_response(0, ""),   # Whisper キャンセル
+            self._make_response(0, ""),   # ホットキー キャンセル
+            self._make_response(0, ""),   # Ollama キャンセル
+        ]
+        _fake_rumps.Window.side_effect = [
+            MagicMock(run=MagicMock(return_value=responses[0])),
+            MagicMock(run=MagicMock(return_value=responses[1])),
+            MagicMock(run=MagicMock(return_value=responses[2])),
+        ]
+
+        original_hotkey = app.config.hotkey
+        original_model = app.config.model
+        original_ollama_model = app.config.ollama_model
+
+        app.open_settings(MagicMock())
+
+        assert app.config.hotkey == original_hotkey
+        assert app.config.model == original_model
+        assert app.config.ollama_model == original_ollama_model
+        app.config.save.assert_not_called()
+        app.transcriber.reload_model.assert_not_called()
+
+    def test_whisper_model_invalid_value_ignored(self, app: Any) -> None:
+        """Whisper モデルに不正な値が入力された場合は無視されること。"""
+        responses = [
+            self._make_response(1, "invalid-model"),  # Whisper モデル OK だが不正値
+            self._make_response(0, ""),                # ホットキー キャンセル
+        ]
+        _fake_rumps.Window.side_effect = [
+            MagicMock(run=MagicMock(return_value=responses[0])),
+            MagicMock(run=MagicMock(return_value=responses[1])),
+        ]
+
+        original_model = app.config.model
+        app.open_settings(MagicMock())
+
+        assert app.config.model == original_model
+        app.transcriber.reload_model.assert_not_called()
