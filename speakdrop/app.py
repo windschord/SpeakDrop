@@ -215,6 +215,9 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
     ) -> bool:
         """共通設定ダイアログ表示ヘルパー。
 
+        本メソッドはユーザー操作の結果（OK/キャンセル）のみを返す。
+        値の適用や同値判定による無変更の処理は on_save 側（_apply_* メソッド）で担当する。
+
         Returns:
             True: OK を押した場合
             False: キャンセルした場合
