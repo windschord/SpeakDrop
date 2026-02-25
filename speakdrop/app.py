@@ -245,8 +245,7 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         ]
         return self._show_setting_dialog(
             message=(
-                "Whisper モデルを選択してください:\n"
-                + "\n".join(f"  {o}" for o in whisper_options)
+                "Whisper モデルを選択してください:\n" + "\n".join(f"  {o}" for o in whisper_options)
             ),
             title="SpeakDrop 設定 (1/3)",
             default_text=self.config.model,
