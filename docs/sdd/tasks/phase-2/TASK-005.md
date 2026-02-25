@@ -204,6 +204,7 @@ class TextProcessor:
 
     def __init__(self, model: str = DEFAULT_MODEL) -> None:
         self._model = model
+        self._client = ollama.Client(host=self.OLLAMA_HOST, timeout=5.0)
 
     def process(self, text: str) -> str:
         """テキストを後処理して返す。
@@ -217,7 +218,7 @@ class TextProcessor:
             処理済みテキスト。Ollama 未起動時は入力テキストそのまま。
         """
         try:
-            response = ollama.chat(
+            response = self._client.chat(
                 model=self._model,
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
