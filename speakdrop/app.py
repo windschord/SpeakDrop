@@ -221,15 +221,22 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             return False
         if response.text:
             new_model = response.text.strip()
-            if new_model in whisper_options and new_model != self.config.model:
-                self.config.model = new_model
-                self.config.save()
+            if new_model in whisper_options:
+                if new_model != self.config.model:
+                    self.config.model = new_model
+                    self.config.save()
+                    rumps.notification(
+                        title="SpeakDrop",
+                        subtitle="モデルを変更しています",
+                        message=f"{new_model} を読み込みます（初回使用時にダウンロード）",
+                    )
+                    self.transcriber.reload_model(new_model)
+            else:
                 rumps.notification(
                     title="SpeakDrop",
-                    subtitle="モデルを変更しています",
-                    message=f"{new_model} を読み込みます（初回使用時にダウンロード）",
+                    subtitle="無効なWhisperモデルです",
+                    message="候補一覧から選択してください",
                 )
-                self.transcriber.reload_model(new_model)
         return True
 
     def _settings_hotkey(self) -> bool:
@@ -257,8 +264,8 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
                     self._start_hotkey_listener()
         return True
 
-    def _settings_ollama(self) -> None:
-        """Ollama モデル設定ダイアログを表示する。"""
+    def _settings_ollama(self) -> bool:
+        """Ollama モデル設定ダイアログを表示する。キャンセル時は False を返す。"""
         response = rumps.Window(
             message=(
                 "Ollama モデルを入力してください:\n"
@@ -270,13 +277,14 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             cancel="キャンセル",
         ).run()
         if not response.clicked:
-            return
+            return False
         if response.text:
             new_ollama_model = response.text.strip()
             if new_ollama_model and new_ollama_model != self.config.ollama_model:
                 self.config.ollama_model = new_ollama_model
                 self.config.save()
                 self.text_processor = TextProcessor(model=new_ollama_model)
+        return True
 
     def open_settings(self, _: rumps.MenuItem) -> None:
         """設定ダイアログを表示する（REQ-013）。

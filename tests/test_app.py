@@ -489,7 +489,7 @@ class TestOpenSettings:
         app.transcriber.reload_model.assert_not_called()
 
     def test_whisper_model_invalid_value_ignored(self, app: Any) -> None:
-        """Whisper モデルに不正な値が入力された場合は無視されること。"""
+        """Whisper モデルに不正な値が入力された場合は無視され通知が表示されること。"""
         original_model = app.config.model
 
         with patch("speakdrop.app.rumps.Window") as mock_window_cls:
@@ -497,11 +497,13 @@ class TestOpenSettings:
                 (1, "invalid-model"),  # 不正値: OK → 無視
                 (0, ""),  # ホットキー キャンセル → 終了
             )
-            app.open_settings(MagicMock())
+            with patch("speakdrop.app.rumps.notification") as mock_notification:
+                app.open_settings(MagicMock())
 
         assert app.config.model == original_model
         app.transcriber.reload_model.assert_not_called()
         app.config.save.assert_not_called()
+        mock_notification.assert_called_once()
 
     def test_hotkey_change_does_not_start_listener_when_disabled(self, app: Any) -> None:
         """音声入力が無効な場合はホットキー変更後にリスナーを起動しないこと。"""
