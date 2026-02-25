@@ -446,7 +446,8 @@ class TestOpenSettings:
                 (0, ""),  # Ollama キャンセル → 終了
             )
             with patch.object(app, "_start_hotkey_listener") as mock_start:
-                app.open_settings(MagicMock())
+                with patch.object(app, "_is_valid_hotkey", return_value=True):
+                    app.open_settings(MagicMock())
 
         mock_listener.stop.assert_called_once()
         mock_start.assert_called_once()
@@ -518,9 +519,56 @@ class TestOpenSettings:
                 (0, ""),  # Ollama キャンセル → 終了
             )
             with patch.object(app, "_start_hotkey_listener") as mock_start:
-                app.open_settings(MagicMock())
+                with patch.object(app, "_is_valid_hotkey", return_value=True):
+                    app.open_settings(MagicMock())
 
         mock_listener.stop.assert_called_once()
         mock_start.assert_not_called()
         assert app.config.hotkey == "alt_l"
         app.config.save.assert_called_once()
+
+    def test_hotkey_change_invalid_value_shows_notification(self, app: Any) -> None:
+        """無効なホットキーを入力した場合は通知が表示されリスナーが再起動されないこと。"""
+        mock_listener = MagicMock()
+        app.hotkey_listener = mock_listener
+        original_hotkey = app.config.hotkey
+
+        with patch("speakdrop.app.rumps.Window") as mock_window_cls:
+            mock_window_cls.side_effect = _window_sequence(
+                (1, app.config.model),  # Whisper OK（変更なし）
+                (1, "xyz_invalid"),  # ホットキー 無効値
+                (0, ""),  # Ollama キャンセル → 終了
+            )
+            with patch.object(app, "_is_valid_hotkey", return_value=False):
+                with patch("speakdrop.app.rumps.notification") as mock_notification:
+                    with patch.object(app, "_start_hotkey_listener") as mock_start:
+                        app.open_settings(MagicMock())
+
+        mock_notification.assert_called_once()
+        mock_start.assert_not_called()
+        assert app.config.hotkey == original_hotkey
+        app.config.save.assert_not_called()
+
+    def test_all_three_settings_changed(self, app: Any) -> None:
+        """3ステップ全て変更した場合に各コンポーネントが更新されること。"""
+        mock_listener = MagicMock()
+        app.hotkey_listener = mock_listener
+
+        with patch("speakdrop.app.rumps.Window") as mock_window_cls:
+            mock_window_cls.side_effect = _window_sequence(
+                (1, "large-v3"),  # Whisper 変更
+                (1, "alt_l"),  # ホットキー 変更
+                (1, "gemma3:4b"),  # Ollama 変更
+            )
+            with patch("speakdrop.app.TextProcessor") as mock_tp_cls:
+                mock_tp_cls.return_value = MagicMock()
+                with patch.object(app, "_start_hotkey_listener") as mock_start:
+                    with patch.object(app, "_is_valid_hotkey", return_value=True):
+                        app.open_settings(MagicMock())
+
+        app.transcriber.reload_model.assert_called_once_with("large-v3")
+        mock_listener.stop.assert_called_once()
+        mock_start.assert_called_once()
+        mock_tp_cls.assert_called_once_with(model="gemma3:4b")
+        assert app.text_processor is mock_tp_cls.return_value
+        assert app.config.hotkey == "alt_l"

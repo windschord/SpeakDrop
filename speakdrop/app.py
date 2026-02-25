@@ -239,6 +239,16 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
                 )
         return True
 
+    def _is_valid_hotkey(self, key: str) -> bool:
+        """ホットキー文字列が pynput.keyboard.Key に存在するか確認する。"""
+        try:
+            from pynput.keyboard import Key  # noqa: PLC0415
+
+            getattr(Key, key)
+            return True
+        except (AttributeError, ImportError):
+            return False
+
     def _settings_hotkey(self) -> bool:
         """ホットキー設定ダイアログを表示する。キャンセル時は False を返す。"""
         response = rumps.Window(
@@ -256,12 +266,19 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         if response.text:
             new_hotkey = response.text.strip()
             if new_hotkey and new_hotkey != self.config.hotkey:
-                self.config.hotkey = new_hotkey
-                self.config.save()
-                if hasattr(self, "hotkey_listener"):
-                    self.hotkey_listener.stop()
-                if self.config.enabled:
-                    self._start_hotkey_listener()
+                if not self._is_valid_hotkey(new_hotkey):
+                    rumps.notification(
+                        title="SpeakDrop",
+                        subtitle="無効なホットキーです",
+                        message="有効なキー名を入力してください（例: alt_r, ctrl_l）",
+                    )
+                else:
+                    self.config.hotkey = new_hotkey
+                    self.config.save()
+                    if hasattr(self, "hotkey_listener"):
+                        self.hotkey_listener.stop()
+                    if self.config.enabled:
+                        self._start_hotkey_listener()
         return True
 
     def _settings_ollama(self) -> bool:
@@ -284,6 +301,11 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
                 self.config.ollama_model = new_ollama_model
                 self.config.save()
                 self.text_processor = TextProcessor(model=new_ollama_model)
+                rumps.notification(
+                    title="SpeakDrop",
+                    subtitle="Ollama モデルを変更しました",
+                    message=f"{new_ollama_model} を使用します",
+                )
         return True
 
     def open_settings(self, _: rumps.MenuItem) -> None:
