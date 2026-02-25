@@ -319,6 +319,11 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             title="SpeakDrop 設定 (3/3)",
             default_text=self.config.ollama_model,
             on_save=self._apply_ollama_model,
+            on_invalid=lambda: rumps.notification(
+                title="SpeakDrop",
+                subtitle="無効なOllamaモデルです",
+                message="モデル名を入力してください",
+            ),
         )
 
     def _apply_ollama_model(self, model: str) -> None:
