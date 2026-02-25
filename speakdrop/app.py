@@ -321,7 +321,7 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             ),
             title="SpeakDrop 設定 (3/3)",
             default_text=self.config.ollama_model,
-            validator=lambda v: bool(re.match(r"^[\w./-]+:[\w./-]+$", v)),
+            validator=lambda v: bool(re.match(r"^[\w./-]+(?::[\w./-]+)?$", v)),
             on_save=self._apply_ollama_model,
             on_invalid=lambda: rumps.notification(
                 title="SpeakDrop",

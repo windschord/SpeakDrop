@@ -36,6 +36,9 @@ class Config:
             if not isinstance(data, dict):
                 return self
             # str と bool のみ対応（他の型を追加した場合はここも更新が必要）
+            # 注意: from __future__ import annotations を追加すると f.type が
+            # 文字列になり is 比較が機能しなくなるため、追加する場合は
+            # typing.get_type_hints() への移行が必要
             expected_types = {f.name: f.type for f in fields(self)}
             for key, value in data.items():
                 expected = expected_types.get(key)
