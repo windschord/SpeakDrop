@@ -142,6 +142,26 @@ def app() -> Any:
 
 
 # ---------------------------------------------------------------------------
+# テストヘルパー
+# ---------------------------------------------------------------------------
+
+
+def _make_window_response(clicked: int, text: str) -> MagicMock:
+    """Window.run() の戻り値を生成するヘルパー。"""
+    r = MagicMock()
+    r.clicked = clicked
+    r.text = text
+    return r
+
+
+def _make_window_mock(response: MagicMock) -> MagicMock:
+    """Window インスタンスのモックを生成するヘルパー。"""
+    window = MagicMock()
+    window.run.return_value = response
+    return window
+
+
+# ---------------------------------------------------------------------------
 # テスト
 # ---------------------------------------------------------------------------
 
@@ -393,21 +413,6 @@ class TestProcessAudio:
         assert app.state == AppState.IDLE
 
 
-def _make_window_response(clicked: int, text: str) -> MagicMock:
-    """Window.run() の戻り値を生成するヘルパー。"""
-    r = MagicMock()
-    r.clicked = clicked
-    r.text = text
-    return r
-
-
-def _make_window_mock(response: MagicMock) -> MagicMock:
-    """Window インスタンスのモックを生成するヘルパー。"""
-    window = MagicMock()
-    window.run.return_value = response
-    return window
-
-
 class TestOpenSettings:
     """open_settings() ダイアログのテスト。"""
 
@@ -493,3 +498,22 @@ class TestOpenSettings:
 
         assert app.config.model == original_model
         app.transcriber.reload_model.assert_not_called()
+
+    def test_hotkey_change_does_not_start_listener_when_disabled(self, app: Any) -> None:
+        """音声入力が無効な場合はホットキー変更後にリスナーを起動しないこと。"""
+        app.config.enabled = False
+        mock_listener = MagicMock()
+        app.hotkey_listener = mock_listener
+
+        with patch("speakdrop.app.rumps.Window") as mock_window_cls:
+            mock_window_cls.side_effect = [
+                _make_window_mock(_make_window_response(0, "")),  # Whisper キャンセル
+                _make_window_mock(_make_window_response(1, "alt_l")),  # ホットキー OK
+                _make_window_mock(_make_window_response(0, "")),  # Ollama キャンセル
+            ]
+            with patch.object(app, "_start_hotkey_listener") as mock_start:
+                app.open_settings(MagicMock())
+
+        mock_listener.stop.assert_called_once()
+        mock_start.assert_not_called()
+        assert app.config.hotkey == "alt_l"

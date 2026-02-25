@@ -217,7 +217,9 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         ]
 
         whisper_response = rumps.Window(
-            message="Whisper モデルを選択してください:",
+            message=(
+                "Whisper モデルを選択してください:\n" + "\n".join(f"  {o}" for o in whisper_options)
+            ),
             title="SpeakDrop 設定 (1/3)",
             default_text=self.config.model,
             ok="OK",
@@ -255,7 +257,8 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
                 self.config.save()
                 if hasattr(self, "hotkey_listener"):
                     self.hotkey_listener.stop()
-                self._start_hotkey_listener()
+                if self.config.enabled:
+                    self._start_hotkey_listener()
 
         # --- ステップ 3/3: Ollama モデル設定 ---
         ollama_response = rumps.Window(
