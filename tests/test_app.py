@@ -432,9 +432,9 @@ class TestOpenSettings:
 
         with patch("speakdrop.app.rumps.Window") as mock_window_cls:
             mock_window_cls.side_effect = [
-                _make_window_mock(_make_window_response(0, "")),        # Whisper キャンセル
-                _make_window_mock(_make_window_response(1, "alt_l")),   # ホットキー OK
-                _make_window_mock(_make_window_response(0, "")),        # Ollama キャンセル
+                _make_window_mock(_make_window_response(0, "")),  # Whisper キャンセル
+                _make_window_mock(_make_window_response(1, "alt_l")),  # ホットキー OK
+                _make_window_mock(_make_window_response(0, "")),  # Ollama キャンセル
             ]
             with patch.object(app, "_start_hotkey_listener") as mock_start:
                 app.open_settings(MagicMock())
@@ -447,9 +447,9 @@ class TestOpenSettings:
         """Ollama モデル変更時に TextProcessor が再生成されること。"""
         with patch("speakdrop.app.rumps.Window") as mock_window_cls:
             mock_window_cls.side_effect = [
-                _make_window_mock(_make_window_response(0, "")),            # Whisper キャンセル
-                _make_window_mock(_make_window_response(0, "")),            # ホットキー キャンセル
-                _make_window_mock(_make_window_response(1, "gemma3:4b")),   # Ollama OK
+                _make_window_mock(_make_window_response(0, "")),  # Whisper キャンセル
+                _make_window_mock(_make_window_response(0, "")),  # ホットキー キャンセル
+                _make_window_mock(_make_window_response(1, "gemma3:4b")),  # Ollama OK
             ]
             with patch("speakdrop.app.TextProcessor") as mock_tp_cls:
                 mock_tp_cls.return_value = MagicMock()
@@ -467,9 +467,9 @@ class TestOpenSettings:
 
         with patch("speakdrop.app.rumps.Window") as mock_window_cls:
             mock_window_cls.side_effect = [
-                _make_window_mock(_make_window_response(0, "")),   # Whisper キャンセル
-                _make_window_mock(_make_window_response(0, "")),   # ホットキー キャンセル
-                _make_window_mock(_make_window_response(0, "")),   # Ollama キャンセル
+                _make_window_mock(_make_window_response(0, "")),  # Whisper キャンセル
+                _make_window_mock(_make_window_response(0, "")),  # ホットキー キャンセル
+                _make_window_mock(_make_window_response(0, "")),  # Ollama キャンセル
             ]
             app.open_settings(MagicMock())
 
@@ -486,8 +486,8 @@ class TestOpenSettings:
         with patch("speakdrop.app.rumps.Window") as mock_window_cls:
             mock_window_cls.side_effect = [
                 _make_window_mock(_make_window_response(1, "invalid-model")),  # 不正値
-                _make_window_mock(_make_window_response(0, "")),               # ホットキー キャンセル
-                _make_window_mock(_make_window_response(0, "")),               # Ollama キャンセル
+                _make_window_mock(_make_window_response(0, "")),  # ホットキー キャンセル
+                _make_window_mock(_make_window_response(0, "")),  # Ollama キャンセル
             ]
             app.open_settings(MagicMock())
 
