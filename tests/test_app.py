@@ -533,16 +533,18 @@ class TestOpenSettings:
         app.hotkey_listener = mock_listener
         original_hotkey = app.config.hotkey
 
-        with patch("speakdrop.app.rumps.Window") as mock_window_cls:
+        with (
+            patch("speakdrop.app.rumps.Window") as mock_window_cls,
+            patch.object(app, "_is_valid_hotkey", return_value=False),
+            patch("speakdrop.app.rumps.notification") as mock_notification,
+            patch.object(app, "_start_hotkey_listener") as mock_start,
+        ):
             mock_window_cls.side_effect = _window_sequence(
                 (1, app.config.model),  # Whisper OK（変更なし）
                 (1, "xyz_invalid"),  # ホットキー 無効値
                 (0, ""),  # Ollama キャンセル → 終了
             )
-            with patch.object(app, "_is_valid_hotkey", return_value=False):
-                with patch("speakdrop.app.rumps.notification") as mock_notification:
-                    with patch.object(app, "_start_hotkey_listener") as mock_start:
-                        app.open_settings(MagicMock())
+            app.open_settings(MagicMock())
 
         mock_notification.assert_called_once()
         mock_start.assert_not_called()
@@ -554,17 +556,19 @@ class TestOpenSettings:
         mock_listener = MagicMock()
         app.hotkey_listener = mock_listener
 
-        with patch("speakdrop.app.rumps.Window") as mock_window_cls:
+        with (
+            patch("speakdrop.app.rumps.Window") as mock_window_cls,
+            patch("speakdrop.app.TextProcessor") as mock_tp_cls,
+            patch.object(app, "_start_hotkey_listener") as mock_start,
+            patch.object(app, "_is_valid_hotkey", return_value=True),
+        ):
+            mock_tp_cls.return_value = MagicMock()
             mock_window_cls.side_effect = _window_sequence(
                 (1, "large-v3"),  # Whisper 変更
                 (1, "alt_l"),  # ホットキー 変更
                 (1, "gemma3:4b"),  # Ollama 変更
             )
-            with patch("speakdrop.app.TextProcessor") as mock_tp_cls:
-                mock_tp_cls.return_value = MagicMock()
-                with patch.object(app, "_start_hotkey_listener") as mock_start:
-                    with patch.object(app, "_is_valid_hotkey", return_value=True):
-                        app.open_settings(MagicMock())
+            app.open_settings(MagicMock())
 
         app.transcriber.reload_model.assert_called_once_with("large-v3")
         mock_listener.stop.assert_called_once()

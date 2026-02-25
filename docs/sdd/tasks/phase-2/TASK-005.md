@@ -87,7 +87,7 @@ class TestTextProcessorConstants:
         """OLLAMA_HOST が localhost を指すこと（NFR-005）。"""
         assert TextProcessor.OLLAMA_HOST == "http://localhost:11434"
 
-    def test_model(self) -> None:
+    def test_default_model(self) -> None:
         """DEFAULT_MODEL が 'qwen2.5:7b' であること。"""
         assert TextProcessor.DEFAULT_MODEL == "qwen2.5:7b"
 
@@ -120,7 +120,7 @@ class TestTextProcessorProcess:
         processor.process("テスト")
 
         call_kwargs = mock_ollama.chat.call_args.kwargs
-        assert call_kwargs["model"] == "qwen2.5:7b"
+        assert call_kwargs["model"] == TextProcessor.DEFAULT_MODEL
 
     @patch("speakdrop.text_processor.ollama")
     def test_process_fallback_on_connection_error(

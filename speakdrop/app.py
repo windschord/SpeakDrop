@@ -226,13 +226,14 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         ).run()
         if not response.clicked:
             return False
-        if response.text:
-            new_value = response.text.strip()
-            if new_value:
-                if validator is None or validator(new_value):
-                    on_save(new_value)
-                elif on_invalid is not None:
-                    on_invalid()
+        new_value = response.text.strip() if response.text else ""
+        if new_value:
+            if validator is None or validator(new_value):
+                on_save(new_value)
+            elif on_invalid is not None:
+                on_invalid()
+        elif on_invalid is not None:
+            on_invalid()
         return True
 
     def _settings_whisper(self) -> bool:
