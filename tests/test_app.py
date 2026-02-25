@@ -506,6 +506,23 @@ class TestOpenSettings:
         app.config.save.assert_not_called()
         mock_notification.assert_called_once()
 
+    def test_whisper_empty_value_shows_notification_and_does_not_save(self, app: Any) -> None:
+        """Whisper に空入力で OK の場合は保存せず通知のみ行うこと。"""
+        original_model = app.config.model
+
+        with patch("speakdrop.app.rumps.Window") as mock_window_cls:
+            mock_window_cls.side_effect = _window_sequence(
+                (1, ""),  # Whisper: 空入力で OK
+                (0, ""),  # Hotkey: キャンセル → 終了
+            )
+            with patch("speakdrop.app.rumps.notification") as mock_notification:
+                app.open_settings(MagicMock())
+
+        assert app.config.model == original_model
+        app.config.save.assert_not_called()
+        app.transcriber.reload_model.assert_not_called()
+        mock_notification.assert_called_once()
+
     def test_hotkey_change_does_not_start_listener_when_disabled(self, app: Any) -> None:
         """音声入力が無効な場合はホットキー変更後にリスナーを起動しないこと。"""
         app.config.enabled = False
