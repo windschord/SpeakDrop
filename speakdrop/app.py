@@ -244,9 +244,8 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
         try:
             from pynput.keyboard import Key  # noqa: PLC0415
 
-            getattr(Key, key)
-            return True
-        except (AttributeError, ImportError):
+            return key in Key.__members__
+        except ImportError:
             return False
 
     def _settings_hotkey(self) -> bool:
