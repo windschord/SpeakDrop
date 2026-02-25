@@ -426,7 +426,7 @@ class TestOpenSettings:
             ]
             app.open_settings(MagicMock())
 
-        app.config.save.assert_called()
+        app.config.save.assert_called_once()
         app.transcriber.reload_model.assert_called_once_with("large-v3")
 
     def test_hotkey_change_restarts_listener(self, app: Any) -> None:
@@ -467,7 +467,8 @@ class TestOpenSettings:
 
         mock_tp_cls.assert_called_once_with(model="gemma3:4b")
         assert app.config.ollama_model == "gemma3:4b"
-        app.config.save.assert_called()
+        app.config.save.assert_called_once()
+        assert app.text_processor is mock_tp_cls.return_value
 
     def test_all_cancel_changes_nothing(self, app: Any) -> None:
         """最初のダイアログでキャンセルした場合に設定が変更されないこと。"""
