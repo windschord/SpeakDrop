@@ -226,9 +226,9 @@ class SpeakDropApp(rumps.App):  # type: ignore[misc]
             cancel="キャンセル",
         ).run()
 
-        if whisper_response.clicked and whisper_response.text in whisper_options:
-            new_model = whisper_response.text
-            if new_model != self.config.model:
+        if whisper_response.clicked and whisper_response.text:
+            new_model = whisper_response.text.strip()
+            if new_model in whisper_options and new_model != self.config.model:
                 self.config.model = new_model
                 self.config.save()
                 rumps.notification(
