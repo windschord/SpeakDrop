@@ -3,7 +3,7 @@
 設定を ~/.config/speakdrop/config.json に保存・読み込みする。
 """
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, fields
 import json
 from pathlib import Path
 
@@ -17,6 +17,7 @@ class Config:
     hotkey: str = "alt_r"
     model: str = "kotoba-tech/kotoba-whisper-v1.0"
     enabled: bool = True
+    ollama_model: str = "qwen2.5:7b"
 
     def load(self, config_path: Path = CONFIG_PATH) -> "Config":
         """設定ファイルが存在すれば読み込む（REQ-017）。
@@ -29,11 +30,21 @@ class Config:
         """
         if config_path.exists():
             try:
-                data: dict[str, object] = json.loads(config_path.read_text(encoding="utf-8"))
+                data: object = json.loads(config_path.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
                 return self
+            if not isinstance(data, dict):
+                return self
+            # str と bool のみ対応（他の型を追加した場合はここも更新が必要）
+            # 注意: from __future__ import annotations を追加すると f.type が
+            # 文字列になり is 比較が機能しなくなるため、追加する場合は
+            # typing.get_type_hints() への移行が必要
+            expected_types = {f.name: f.type for f in fields(self)}
             for key, value in data.items():
-                if hasattr(self, key):
+                expected = expected_types.get(key)
+                if expected is str and isinstance(value, str):
+                    setattr(self, key, value)
+                elif expected is bool and isinstance(value, bool):
                     setattr(self, key, value)
         return self
 

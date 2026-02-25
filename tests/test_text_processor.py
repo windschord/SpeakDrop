@@ -12,9 +12,9 @@ class TestTextProcessorConstants:
         """OLLAMA_HOST が localhost を指すこと（NFR-005）。"""
         assert TextProcessor.OLLAMA_HOST == "http://localhost:11434"
 
-    def test_model(self) -> None:
-        """MODEL が 'qwen2.5:7b' であること。"""
-        assert TextProcessor.MODEL == "qwen2.5:7b"
+    def test_default_model(self) -> None:
+        """DEFAULT_MODEL が 'qwen2.5:7b' であること。"""
+        assert TextProcessor.DEFAULT_MODEL == "qwen2.5:7b"
 
 
 class TestTextProcessorProcess:
@@ -45,7 +45,7 @@ class TestTextProcessorProcess:
 
     @patch("speakdrop.text_processor.ollama.Client")
     def test_process_calls_ollama_with_correct_model(self, mock_client_cls: MagicMock) -> None:
-        """Ollama に正しいモデルを指定して呼び出すこと。"""
+        """Ollama に正しいモデルを指定して呼び出すこと（デフォルトモデル）。"""
         mock_client = MagicMock()
         mock_client_cls.return_value = mock_client
         mock_response = MagicMock()
@@ -56,7 +56,22 @@ class TestTextProcessorProcess:
         processor.process("テスト")
 
         call_kwargs = mock_client.chat.call_args.kwargs
-        assert call_kwargs["model"] == "qwen2.5:7b"
+        assert call_kwargs["model"] == TextProcessor.DEFAULT_MODEL
+
+    @patch("speakdrop.text_processor.ollama.Client")
+    def test_custom_model_is_used(self, mock_client_cls: MagicMock) -> None:
+        """TextProcessor(model=...) でカスタムモデルが使用されること。"""
+        mock_client = MagicMock()
+        mock_client_cls.return_value = mock_client
+        mock_response = MagicMock()
+        mock_response.message.content = "カスタム。"
+        mock_client.chat.return_value = mock_response
+
+        processor = TextProcessor(model="custom:model")
+        processor.process("テスト")
+
+        call_kwargs = mock_client.chat.call_args.kwargs
+        assert call_kwargs["model"] == "custom:model"
 
     @patch("speakdrop.text_processor.ollama.Client")
     def test_process_fallback_on_connection_error(self, mock_client_cls: MagicMock) -> None:

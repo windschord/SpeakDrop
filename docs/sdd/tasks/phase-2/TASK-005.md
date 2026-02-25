@@ -54,7 +54,7 @@ TDD原則に従い、`ollama` クライアントはpytest-mockでモックしま
 - [ ] `tests/test_text_processor.py` が作成されている（テストが5件以上）
 - [ ] `speakdrop/text_processor.py` が実装されている
 - [ ] `TextProcessor.OLLAMA_HOST == "http://localhost:11434"`（NFR-005）
-- [ ] `TextProcessor.MODEL == "qwen2.5:7b"`
+- [ ] `TextProcessor.DEFAULT_MODEL == "qwen2.5:7b"`（インスタンスは `self._model` で参照）
 - [ ] 正常ケース: Ollamaが返したテキストを返す（REQ-007, REQ-008）
 - [ ] フォールバック: Ollama未起動時は元テキストを返す（REQ-009）
 - [ ] タイムアウト: 5秒（NFR-002対応）
@@ -87,75 +87,84 @@ class TestTextProcessorConstants:
         """OLLAMA_HOST が localhost を指すこと（NFR-005）。"""
         assert TextProcessor.OLLAMA_HOST == "http://localhost:11434"
 
-    def test_model(self) -> None:
-        """MODEL が 'qwen2.5:7b' であること。"""
-        assert TextProcessor.MODEL == "qwen2.5:7b"
+    def test_default_model(self) -> None:
+        """DEFAULT_MODEL が 'qwen2.5:7b' であること。"""
+        assert TextProcessor.DEFAULT_MODEL == "qwen2.5:7b"
 
 
 class TestTextProcessorProcess:
     """TextProcessor.process() のテスト。"""
 
-    @patch("speakdrop.text_processor.ollama")
-    def test_process_returns_processed_text(self, mock_ollama: MagicMock) -> None:
+    @patch("speakdrop.text_processor.ollama.Client")
+    def test_process_returns_processed_text(self, mock_client_cls: MagicMock) -> None:
         """Ollama が正常に応答した場合、処理済みテキストを返すこと（REQ-007,008）。"""
+        mock_client = MagicMock()
+        mock_client_cls.return_value = mock_client
         mock_response = MagicMock()
         mock_response.message.content = "こんにちは、世界。"
-        mock_ollama.chat.return_value = mock_response
+        mock_client.chat.return_value = mock_response
 
         processor = TextProcessor()
         result = processor.process("こんにちは世界")
 
         assert result == "こんにちは、世界。"
 
-    @patch("speakdrop.text_processor.ollama")
+    @patch("speakdrop.text_processor.ollama.Client")
     def test_process_calls_ollama_with_correct_model(
-        self, mock_ollama: MagicMock
+        self, mock_client_cls: MagicMock
     ) -> None:
         """Ollama に正しいモデルを指定して呼び出すこと。"""
+        mock_client = MagicMock()
+        mock_client_cls.return_value = mock_client
         mock_response = MagicMock()
         mock_response.message.content = "テスト。"
-        mock_ollama.chat.return_value = mock_response
+        mock_client.chat.return_value = mock_response
 
         processor = TextProcessor()
         processor.process("テスト")
 
-        call_kwargs = mock_ollama.chat.call_args.kwargs
-        assert call_kwargs["model"] == "qwen2.5:7b"
+        call_kwargs = mock_client.chat.call_args.kwargs
+        assert call_kwargs["model"] == TextProcessor.DEFAULT_MODEL
 
-    @patch("speakdrop.text_processor.ollama")
+    @patch("speakdrop.text_processor.ollama.Client")
     def test_process_fallback_on_connection_error(
-        self, mock_ollama: MagicMock
+        self, mock_client_cls: MagicMock
     ) -> None:
         """Ollama 未起動時（接続エラー）は元テキストを返すこと（REQ-009）。"""
-        mock_ollama.chat.side_effect = Exception("Connection refused")
+        mock_client = MagicMock()
+        mock_client_cls.return_value = mock_client
+        mock_client.chat.side_effect = Exception("Connection refused")
 
         processor = TextProcessor()
         result = processor.process("こんにちは")
 
         assert result == "こんにちは"
 
-    @patch("speakdrop.text_processor.ollama")
-    def test_process_fallback_on_response_error(self, mock_ollama: MagicMock) -> None:
+    @patch("speakdrop.text_processor.ollama.Client")
+    def test_process_fallback_on_response_error(self, mock_client_cls: MagicMock) -> None:
         """Ollama がエラーを返した場合も元テキストを返すこと（REQ-009）。"""
-        mock_ollama.ResponseError = Exception
-        mock_ollama.chat.side_effect = mock_ollama.ResponseError("Model not found")
+        mock_client = MagicMock()
+        mock_client_cls.return_value = mock_client
+        mock_client.chat.side_effect = Exception("Model not found")
 
         processor = TextProcessor()
         result = processor.process("テスト入力")
 
         assert result == "テスト入力"
 
-    @patch("speakdrop.text_processor.ollama")
-    def test_process_includes_system_prompt(self, mock_ollama: MagicMock) -> None:
+    @patch("speakdrop.text_processor.ollama.Client")
+    def test_process_includes_system_prompt(self, mock_client_cls: MagicMock) -> None:
         """Ollama 呼び出し時にシステムプロンプトが含まれること。"""
+        mock_client = MagicMock()
+        mock_client_cls.return_value = mock_client
         mock_response = MagicMock()
         mock_response.message.content = "テスト。"
-        mock_ollama.chat.return_value = mock_response
+        mock_client.chat.return_value = mock_response
 
         processor = TextProcessor()
         processor.process("テスト")
 
-        call_kwargs = mock_ollama.chat.call_args.kwargs
+        call_kwargs = mock_client.chat.call_args.kwargs
         messages = call_kwargs["messages"]
         system_messages = [m for m in messages if m.get("role") == "system"]
         assert len(system_messages) == 1
@@ -200,7 +209,11 @@ class TextProcessor:
     """Ollama LLM によるテキスト後処理クラス（NFR-005: ローカル処理）。"""
 
     OLLAMA_HOST: str = "http://localhost:11434"  # NFR-005: ローカル固定
-    MODEL: str = "qwen2.5:7b"
+    DEFAULT_MODEL: str = "qwen2.5:7b"
+
+    def __init__(self, model: str = DEFAULT_MODEL) -> None:
+        self._model = model
+        self._client = ollama.Client(host=self.OLLAMA_HOST, timeout=5.0)
 
     def process(self, text: str) -> str:
         """テキストを後処理して返す。
@@ -214,15 +227,16 @@ class TextProcessor:
             処理済みテキスト。Ollama 未起動時は入力テキストそのまま。
         """
         try:
-            response = ollama.chat(
-                model=self.MODEL,
+            response = self._client.chat(
+                model=self._model,
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": text},
                 ],
                 options={"num_predict": 512},
             )
-            return str(response.message.content)
+            content = response.message.content
+            return str(content) if content else text
         except Exception:
             # REQ-009: Ollama 未起動・エラー時はフォールバック
             return text
@@ -280,7 +294,7 @@ SYSTEM_PROMPT = """あなたは日本語テキストの校正を行うアシス�
 ## 注意事項
 
 - `import ollama` をモジュールレベルでインポートすること（テストでモック可能にするため）
-- テストでは `@patch("speakdrop.text_processor.ollama")` でモックすること
+- テストでは `@patch("speakdrop.text_processor.ollama.Client")` でモックすること
 - OLLAMA_HOST は固定値であり、設定変更不可（NFR-005: ローカル処理の徹底）
 - 例外処理は広く（`except Exception`）キャッチして確実にフォールバックすること
 - タイムアウト設定は ollama ライブラリのバージョンを確認して適切に実装すること
